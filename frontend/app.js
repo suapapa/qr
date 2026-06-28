@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. DOM Elements
     const form = document.getElementById('qr-generator-form');
     const tabButtons = document.querySelectorAll('.tab-btn');
+    const typeSelect = document.getElementById('select-qr-type');
     const inputPanels = document.querySelectorAll('.input-panel');
     const btnGenerate = document.getElementById('btn-generate');
     
@@ -89,16 +90,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function selectTab(button) {
-        const selectedType = button.getAttribute('data-type');
-
+    function selectQrType(selectedType) {
         tabButtons.forEach((btn) => {
-            btn.classList.remove('active');
-            btn.setAttribute('aria-selected', 'false');
+            const isActive = btn.getAttribute('data-type') === selectedType;
+            btn.classList.toggle('active', isActive);
+            btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            if (isActive) {
+                updateTabFocusability(btn);
+            }
         });
-        button.classList.add('active');
-        button.setAttribute('aria-selected', 'true');
-        updateTabFocusability(button);
+
+        if (typeSelect && typeSelect.value !== selectedType) {
+            typeSelect.value = selectedType;
+        }
 
         inputPanels.forEach((panel) => {
             panel.classList.remove('active');
@@ -110,6 +114,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentQrType = selectedType;
         clearValidationErrors();
+    }
+
+    function selectTab(button) {
+        selectQrType(button.getAttribute('data-type'));
+    }
+
+    if (typeSelect) {
+        typeSelect.addEventListener('change', (e) => {
+            selectQrType(e.target.value);
+        });
     }
 
     tabButtons.forEach((button, index) => {

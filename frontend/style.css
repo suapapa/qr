@@ -221,22 +221,33 @@ body {
     height: 1.25rem;
 }
 
-/* 5. Tabs Styling */
+/* 5. QR type: tabs (desktop) / select (mobile) */
 .tabs-container {
     margin-block-end: 1.5rem;
     min-width: 0;
     max-width: 100%;
 }
 
+.type-select-label {
+    display: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-text-main);
+    margin-block-end: 0.5rem;
+}
+
+.type-select-wrapper {
+    display: none;
+    margin-block-end: 0.25rem;
+}
+
 .tabs-list {
     display: flex;
-    overflow-x: auto;
+    flex-wrap: wrap;
     gap: 0.5rem;
     padding-block-end: 0.5rem;
     border-bottom: 1px solid var(--color-border);
     max-width: 100%;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
 }
 
 .tab-btn {
@@ -245,7 +256,6 @@ body {
     color: var(--color-text-muted);
     padding: 0.65rem 1rem;
     min-height: var(--space-touch-min);
-    flex-shrink: 0;
     font-family: var(--font-sans);
     font-size: 0.9rem;
     font-weight: 500;
@@ -1140,6 +1150,15 @@ input[type="range"]::-webkit-slider-thumb:hover {
 @media (max-width: 900px) {
     body {
         padding: 1.25rem 1rem;
+    }
+
+    .type-select-label,
+    .type-select-wrapper {
+        display: block;
+    }
+
+    .tabs-list {
+        display: none;
     }
 
     .app-main-content {

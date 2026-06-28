@@ -43,10 +43,26 @@
                 </h2>
 
                 <form id="qr-generator-form" novalidate>
-                    <!-- QR Type Navigation Tabs -->
+                    <!-- QR Type: dropdown on mobile, tabs on desktop -->
                     <div class="tabs-container">
-                        <label class="visually-hidden">QR 코드 종류 선택</label>
-                        <div class="tabs-list" role="tablist">
+                        <label class="type-select-label" for="select-qr-type"
+                            >QR 코드 종류</label
+                        >
+                        <div class="select-wrapper type-select-wrapper">
+                            <select id="select-qr-type" name="qr_type_ui">
+                                <option value="url" selected>URL</option>
+                                <option value="wifi">Wi-Fi</option>
+                                <option value="text">텍스트</option>
+                                <option value="phone">전화</option>
+                                <option value="sms">SMS</option>
+                                <option value="email">이메일</option>
+                            </select>
+                        </div>
+                        <div
+                            class="tabs-list"
+                            role="tablist"
+                            aria-label="QR 코드 종류 선택"
+                        >
                             <button
                                 type="button"
                                 class="tab-btn active"
