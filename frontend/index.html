@@ -1,364 +1,809 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium QR Code Studio</title>
-    <meta name="description" content="중앙에 맞춤 로고를 삽입하고 디자인을 실시간으로 설정해 고품질 QR 코드를 제작하는 프리미엄 QR 코드 생성 스튜디오">
-    
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="favicon.png" type="image/png">
-</head>
-<body>
-    <header class="app-header">
-        <div class="logo-area">
-            <i class="icon-logo" data-lucide="qr-code"></i>
-            <h1>QR Studio</h1>
-            <span class="badge">PRO</span>
-        </div>
-        <p class="tagline">중앙 로고 삽입 및 다채로운 커스터마이징을 지원하는 실시간 QR 생성기</p>
-    </header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>QR Code Studio</title>
+        <meta
+            name="description"
+            content="중앙에 맞춤 로고를 삽입하고 디자인을 실시간으로 설정해 고품질 QR 코드를 제작하는 프리미엄 QR 코드 생성 스튜디오"
+        />
 
-    <main class="app-main-content">
-        <!-- Left Side: Controls -->
-        <section class="controls-panel card">
-            <h2 class="section-title"><i data-lucide="sliders"></i> QR 코드 설정</h2>
-            
-            <form id="qr-generator-form" novalidate>
-                <!-- QR Type Navigation Tabs -->
-                <div class="tabs-container">
-                    <label class="visually-hidden">QR 코드 종류 선택</label>
-                    <div class="tabs-list" role="tablist">
-                        <button type="button" class="tab-btn active" role="tab" aria-selected="true" aria-controls="panel-url" id="tab-url" data-type="url">
-                            <i data-lucide="link-2"></i> URL
-                        </button>
-                        <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-wifi" id="tab-wifi" data-type="wifi">
-                            <i data-lucide="wifi"></i> Wi-Fi
-                        </button>
-                        <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-text" id="tab-text" data-type="text">
-                            <i data-lucide="align-left"></i> 텍스트
-                        </button>
-                        <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-phone" id="tab-phone" data-type="phone">
-                            <i data-lucide="phone"></i> 전화
-                        </button>
-                        <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-sms" id="tab-sms" data-type="sms">
-                            <i data-lucide="message-square"></i> SMS
-                        </button>
-                        <button type="button" class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-email" id="tab-email" data-type="email">
-                            <i data-lucide="mail"></i> 이메일
-                        </button>
-                    </div>
-                </div>
+        <!-- Google Fonts: Inter -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
 
-                <!-- Input Panels Content -->
-                <div class="panels-container">
-                    <!-- URL Panel -->
-                    <div class="input-panel active" id="panel-url" role="tabpanel" aria-labelledby="tab-url">
-                        <div class="form-group">
-                            <label for="input-url">연결할 URL 주소</label>
-                            <div class="input-wrapper">
-                                <i class="input-icon" data-lucide="link"></i>
-                                <input type="url" id="input-url" name="url" placeholder="https://example.com" value="https://google.com" required>
-                            </div>
-                            <span class="error-msg" id="error-url" aria-live="polite"></span>
+        <!-- Lucide Icons -->
+        <script src="https://unpkg.com/lucide@latest"></script>
+
+        <link rel="stylesheet" href="style.css" />
+        <link rel="icon" href="favicon.png" type="image/png" />
+    </head>
+    <body>
+        <header class="app-header">
+            <div class="logo-area">
+                <i class="icon-logo" data-lucide="qr-code"></i>
+                <h1>QR Studio</h1>
+                <span class="badge">PRO</span>
+            </div>
+            <p class="tagline">
+                중앙 로고 삽입 및 다채로운 커스터마이징을 지원하는 실시간 QR
+                생성기
+            </p>
+        </header>
+
+        <main class="app-main-content">
+            <!-- Left Side: Controls -->
+            <section class="controls-panel card">
+                <h2 class="section-title">
+                    <i data-lucide="sliders"></i> QR 코드 설정
+                </h2>
+
+                <form id="qr-generator-form" novalidate>
+                    <!-- QR Type Navigation Tabs -->
+                    <div class="tabs-container">
+                        <label class="visually-hidden">QR 코드 종류 선택</label>
+                        <div class="tabs-list" role="tablist">
+                            <button
+                                type="button"
+                                class="tab-btn active"
+                                role="tab"
+                                aria-selected="true"
+                                aria-controls="panel-url"
+                                id="tab-url"
+                                data-type="url"
+                            >
+                                <i data-lucide="link-2"></i> URL
+                            </button>
+                            <button
+                                type="button"
+                                class="tab-btn"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panel-wifi"
+                                id="tab-wifi"
+                                data-type="wifi"
+                            >
+                                <i data-lucide="wifi"></i> Wi-Fi
+                            </button>
+                            <button
+                                type="button"
+                                class="tab-btn"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panel-text"
+                                id="tab-text"
+                                data-type="text"
+                            >
+                                <i data-lucide="align-left"></i> 텍스트
+                            </button>
+                            <button
+                                type="button"
+                                class="tab-btn"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panel-phone"
+                                id="tab-phone"
+                                data-type="phone"
+                            >
+                                <i data-lucide="phone"></i> 전화
+                            </button>
+                            <button
+                                type="button"
+                                class="tab-btn"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panel-sms"
+                                id="tab-sms"
+                                data-type="sms"
+                            >
+                                <i data-lucide="message-square"></i> SMS
+                            </button>
+                            <button
+                                type="button"
+                                class="tab-btn"
+                                role="tab"
+                                aria-selected="false"
+                                aria-controls="panel-email"
+                                id="tab-email"
+                                data-type="email"
+                            >
+                                <i data-lucide="mail"></i> 이메일
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Wi-Fi Panel -->
-                    <div class="input-panel" id="panel-wifi" role="tabpanel" aria-labelledby="tab-wifi">
-                        <div class="form-group">
-                            <label for="input-wifi-ssid">네트워크 이름 (SSID)</label>
-                            <div class="input-wrapper">
-                                <i class="input-icon" data-lucide="wifi"></i>
-                                <input type="text" id="input-wifi-ssid" name="wifi_ssid" placeholder="WiFi SSID 입력">
-                            </div>
-                            <span class="error-msg" id="error-wifi-ssid" aria-live="polite"></span>
-                        </div>
-                        <div class="grid-2-cols">
+                    <!-- Input Panels Content -->
+                    <div class="panels-container">
+                        <!-- URL Panel -->
+                        <div
+                            class="input-panel active"
+                            id="panel-url"
+                            role="tabpanel"
+                            aria-labelledby="tab-url"
+                        >
                             <div class="form-group">
-                                <label for="input-wifi-pass">비밀번호</label>
-                                <div class="input-wrapper password-wrapper">
-                                    <i class="input-icon" data-lucide="key-round"></i>
-                                    <input type="password" id="input-wifi-pass" name="wifi_pass" placeholder="비밀번호 입력">
-                                    <button type="button" id="toggle-wifi-pass" class="btn-icon" aria-label="비밀번호 보기 토글">
-                                        <i data-lucide="eye"></i>
-                                    </button>
+                                <label for="input-url">연결할 URL 주소</label>
+                                <div class="input-wrapper">
+                                    <i
+                                        class="input-icon"
+                                        data-lucide="link"
+                                    ></i>
+                                    <input
+                                        type="url"
+                                        id="input-url"
+                                        name="url"
+                                        placeholder="https://example.com"
+                                        value="https://google.com"
+                                        required
+                                    />
                                 </div>
+                                <span
+                                    class="error-msg"
+                                    id="error-url"
+                                    aria-live="polite"
+                                ></span>
+                            </div>
+                        </div>
+
+                        <!-- Wi-Fi Panel -->
+                        <div
+                            class="input-panel"
+                            id="panel-wifi"
+                            role="tabpanel"
+                            aria-labelledby="tab-wifi"
+                        >
+                            <div class="form-group">
+                                <label for="input-wifi-ssid"
+                                    >네트워크 이름 (SSID)</label
+                                >
+                                <div class="input-wrapper">
+                                    <i
+                                        class="input-icon"
+                                        data-lucide="wifi"
+                                    ></i>
+                                    <input
+                                        type="text"
+                                        id="input-wifi-ssid"
+                                        name="wifi_ssid"
+                                        placeholder="WiFi SSID 입력"
+                                    />
+                                </div>
+                                <span
+                                    class="error-msg"
+                                    id="error-wifi-ssid"
+                                    aria-live="polite"
+                                ></span>
+                            </div>
+                            <div class="grid-2-cols">
+                                <div class="form-group">
+                                    <label for="input-wifi-pass"
+                                        >비밀번호</label
+                                    >
+                                    <div class="input-wrapper password-wrapper">
+                                        <i
+                                            class="input-icon"
+                                            data-lucide="key-round"
+                                        ></i>
+                                        <input
+                                            type="password"
+                                            id="input-wifi-pass"
+                                            name="wifi_pass"
+                                            placeholder="비밀번호 입력"
+                                        />
+                                        <button
+                                            type="button"
+                                            id="toggle-wifi-pass"
+                                            class="btn-icon"
+                                            aria-label="비밀번호 보기 토글"
+                                        >
+                                            <i data-lucide="eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="select-wifi-security"
+                                        >보안 설정</label
+                                    >
+                                    <div class="select-wrapper">
+                                        <select
+                                            id="select-wifi-security"
+                                            name="wifi_security"
+                                        >
+                                            <option value="WPA" selected>
+                                                WPA/WPA2
+                                            </option>
+                                            <option value="WEP">WEP</option>
+                                            <option value="nopass">
+                                                암호 없음 (Open)
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Text Panel -->
+                        <div
+                            class="input-panel"
+                            id="panel-text"
+                            role="tabpanel"
+                            aria-labelledby="tab-text"
+                        >
+                            <div class="form-group">
+                                <label for="input-text">입력할 텍스트</label>
+                                <textarea
+                                    id="input-text"
+                                    name="text"
+                                    placeholder="QR 코드에 담을 텍스트 내용을 입력하세요..."
+                                    rows="3"
+                                ></textarea>
+                                <span
+                                    class="error-msg"
+                                    id="error-text"
+                                    aria-live="polite"
+                                ></span>
+                            </div>
+                        </div>
+
+                        <!-- Phone Panel -->
+                        <div
+                            class="input-panel"
+                            id="panel-phone"
+                            role="tabpanel"
+                            aria-labelledby="tab-phone"
+                        >
+                            <div class="form-group">
+                                <label for="input-phone">전화번호</label>
+                                <div class="input-wrapper">
+                                    <i
+                                        class="input-icon"
+                                        data-lucide="phone"
+                                    ></i>
+                                    <input
+                                        type="tel"
+                                        id="input-phone"
+                                        name="phone"
+                                        placeholder="010-1234-5678"
+                                    />
+                                </div>
+                                <span
+                                    class="error-msg"
+                                    id="error-phone"
+                                    aria-live="polite"
+                                ></span>
+                            </div>
+                        </div>
+
+                        <!-- SMS Panel -->
+                        <div
+                            class="input-panel"
+                            id="panel-sms"
+                            role="tabpanel"
+                            aria-labelledby="tab-sms"
+                        >
+                            <div class="form-group">
+                                <label for="input-sms-phone"
+                                    >수신자 전화번호</label
+                                >
+                                <div class="input-wrapper">
+                                    <i
+                                        class="input-icon"
+                                        data-lucide="phone"
+                                    ></i>
+                                    <input
+                                        type="tel"
+                                        id="input-sms-phone"
+                                        name="sms_phone"
+                                        placeholder="010-1234-5678"
+                                    />
+                                </div>
+                                <span
+                                    class="error-msg"
+                                    id="error-sms-phone"
+                                    aria-live="polite"
+                                ></span>
                             </div>
                             <div class="form-group">
-                                <label for="select-wifi-security">보안 설정</label>
-                                <div class="select-wrapper">
-                                    <select id="select-wifi-security" name="wifi_security">
-                                        <option value="WPA" selected>WPA/WPA2</option>
-                                        <option value="WEP">WEP</option>
-                                        <option value="nopass">암호 없음 (Open)</option>
-                                    </select>
+                                <label for="input-sms-message"
+                                    >메시지 내용</label
+                                >
+                                <textarea
+                                    id="input-sms-message"
+                                    name="sms_message"
+                                    placeholder="전송할 문자 메시지를 입력하세요..."
+                                    rows="2"
+                                ></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Email Panel -->
+                        <div
+                            class="input-panel"
+                            id="panel-email"
+                            role="tabpanel"
+                            aria-labelledby="tab-email"
+                        >
+                            <div class="form-group">
+                                <label for="input-email-to"
+                                    >수신 이메일 주소</label
+                                >
+                                <div class="input-wrapper">
+                                    <i
+                                        class="input-icon"
+                                        data-lucide="mail"
+                                    ></i>
+                                    <input
+                                        type="email"
+                                        id="input-email-to"
+                                        name="email_to"
+                                        placeholder="recipient@example.com"
+                                    />
                                 </div>
+                                <span
+                                    class="error-msg"
+                                    id="error-email-to"
+                                    aria-live="polite"
+                                ></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="input-email-subject"
+                                    >메일 제목</label
+                                >
+                                <input
+                                    type="text"
+                                    id="input-email-subject"
+                                    name="email_subject"
+                                    placeholder="이메일 제목 입력"
+                                />
+                            </div>
+                            <div class="form-group">
+                                <label for="input-email-body">메일 본문</label>
+                                <textarea
+                                    id="input-email-body"
+                                    name="email_body"
+                                    placeholder="이메일 내용 입력..."
+                                    rows="2"
+                                ></textarea>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Text Panel -->
-                    <div class="input-panel" id="panel-text" role="tabpanel" aria-labelledby="tab-text">
-                        <div class="form-group">
-                            <label for="input-text">입력할 텍스트</label>
-                            <textarea id="input-text" name="text" placeholder="QR 코드에 담을 텍스트 내용을 입력하세요..." rows="3"></textarea>
-                            <span class="error-msg" id="error-text" aria-live="polite"></span>
-                        </div>
-                    </div>
-
-                    <!-- Phone Panel -->
-                    <div class="input-panel" id="panel-phone" role="tabpanel" aria-labelledby="tab-phone">
-                        <div class="form-group">
-                            <label for="input-phone">전화번호</label>
-                            <div class="input-wrapper">
-                                <i class="input-icon" data-lucide="phone"></i>
-                                <input type="tel" id="input-phone" name="phone" placeholder="010-1234-5678">
-                            </div>
-                            <span class="error-msg" id="error-phone" aria-live="polite"></span>
-                        </div>
-                    </div>
-
-                    <!-- SMS Panel -->
-                    <div class="input-panel" id="panel-sms" role="tabpanel" aria-labelledby="tab-sms">
-                        <div class="form-group">
-                            <label for="input-sms-phone">수신자 전화번호</label>
-                            <div class="input-wrapper">
-                                <i class="input-icon" data-lucide="phone"></i>
-                                <input type="tel" id="input-sms-phone" name="sms_phone" placeholder="010-1234-5678">
-                            </div>
-                            <span class="error-msg" id="error-sms-phone" aria-live="polite"></span>
-                        </div>
-                        <div class="form-group">
-                            <label for="input-sms-message">메시지 내용</label>
-                            <textarea id="input-sms-message" name="sms_message" placeholder="전송할 문자 메시지를 입력하세요..." rows="2"></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Email Panel -->
-                    <div class="input-panel" id="panel-email" role="tabpanel" aria-labelledby="tab-email">
-                        <div class="form-group">
-                            <label for="input-email-to">수신 이메일 주소</label>
-                            <div class="input-wrapper">
-                                <i class="input-icon" data-lucide="mail"></i>
-                                <input type="email" id="input-email-to" name="email_to" placeholder="recipient@example.com">
-                            </div>
-                            <span class="error-msg" id="error-email-to" aria-live="polite"></span>
-                        </div>
-                        <div class="form-group">
-                            <label for="input-email-subject">메일 제목</label>
-                            <input type="text" id="input-email-subject" name="email_subject" placeholder="이메일 제목 입력">
-                        </div>
-                        <div class="form-group">
-                            <label for="input-email-body">메일 본문</label>
-                            <textarea id="input-email-body" name="email_body" placeholder="이메일 내용 입력..." rows="2"></textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Logo Settings -->
-                <div class="accordion-item expanded">
-                    <h3 class="accordion-header"><i data-lucide="image"></i> 중앙 로고 설정</h3>
-                    <div class="accordion-content">
-                        <!-- Default Logo Toggle -->
-                        <div class="toggle-group">
-                            <div class="toggle-info">
-                                <span class="toggle-label">기본 로고 사용</span>
-                                <span class="toggle-desc">시스템 기본 로고(logo.png)를 QR 중앙에 올립니다.</span>
-                            </div>
-                            <label class="switch-container">
-                                <input type="checkbox" id="check-default-logo" name="use_default_logo">
-                                <span class="switch-slider"></span>
-                            </label>
-                        </div>
-
-                        <!-- Logo Upload Box -->
-                        <div class="upload-zone" id="logo-dropzone">
-                            <input type="file" id="logo-file-input" name="logo_file" accept="image/*" class="visually-hidden">
-                            <div class="upload-prompt" id="upload-prompt-view">
-                                <i class="upload-icon" data-lucide="upload-cloud"></i>
-                                <p class="primary-prompt">여기에 로고 이미지 드래그 또는 <span>파일 선택</span></p>
-                                <p class="secondary-prompt">PNG, JPG (투명 배경 PNG 권장)</p>
-                            </div>
-                            <div class="upload-preview hidden" id="upload-preview-view">
-                                <img src="" alt="업로드된 로고 프리뷰" id="uploaded-logo-img">
-                                <div class="file-details">
-                                    <span id="logo-file-name" class="filename">logo.png</span>
-                                    <span id="logo-file-size" class="filesize">0 KB</span>
-                                </div>
-                                <button type="button" id="btn-remove-logo" class="btn-icon danger" aria-label="로고 삭제">
-                                    <i data-lucide="trash-2"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Advanced Logo Settings -->
-                        <div class="advanced-settings-sub">
-                            <div class="slider-group">
-                                <div class="slider-header">
-                                    <label for="range-logo-fraction">로고 크기 비율</label>
-                                    <span class="value-display" id="logo-fraction-val">20%</span>
-                                </div>
-                                <input type="range" id="range-logo-fraction" name="logo_fraction" min="0.10" max="0.25" step="0.01" value="0.20">
-                                <p class="slider-desc">QR 코드 손상 한계 대비 안전한 로고 지름 크기 (권장: 20%)</p>
-                            </div>
-                            <div class="toggle-group sm">
+                    <!-- Logo Settings -->
+                    <div class="accordion-item expanded">
+                        <h3 class="accordion-header">
+                            <i data-lucide="image"></i> 중앙 로고 설정
+                        </h3>
+                        <div class="accordion-content">
+                            <!-- Default Logo Toggle -->
+                            <div class="toggle-group">
                                 <div class="toggle-info">
-                                    <span class="toggle-label">로고 여백 자동 제거</span>
+                                    <span class="toggle-label"
+                                        >기본 로고 사용</span
+                                    >
+                                    <span class="toggle-desc"
+                                        >시스템 기본 로고(logo.png)를 QR 중앙에
+                                        올립니다.</span
+                                    >
                                 </div>
                                 <label class="switch-container">
-                                    <input type="checkbox" id="check-trim-logo" name="trim_logo" checked>
+                                    <input
+                                        type="checkbox"
+                                        id="check-default-logo"
+                                        name="use_default_logo"
+                                    />
                                     <span class="switch-slider"></span>
                                 </label>
                             </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Custom Styling (Colors & Details) -->
-                <div class="accordion-item expanded">
-                    <h3 class="accordion-header"><i data-lucide="palette"></i> 컬러 및 고급 스타일링</h3>
-                    <div class="accordion-content">
-                        <!-- Color Presets -->
-                        <div class="presets-container">
-                            <span class="presets-label">컬러 테마 프리셋</span>
-                            <div class="preset-buttons">
-                                <button type="button" class="preset-btn active" data-fill="#000000" data-back="#ffffff" style="--btn-fill: #000000; --btn-back: #ffffff;" title="클래식 블랙"></button>
-                                <button type="button" class="preset-btn" data-fill="#1e293b" data-back="#f8fafc" style="--btn-fill: #1e293b; --btn-back: #f8fafc;" title="모던 슬레이트"></button>
-                                <button type="button" class="preset-btn" data-fill="#1e3a8a" data-back="#eff6ff" style="--btn-fill: #1e3a8a; --btn-back: #eff6ff;" title="딥 블루"></button>
-                                <button type="button" class="preset-btn" data-fill="#065f46" data-back="#ecfdf5" style="--btn-fill: #065f46; --btn-back: #ecfdf5;" title="보태니컬 그린"></button>
-                                <button type="button" class="preset-btn" data-fill="#581c87" data-back="#faf5ff" style="--btn-fill: #581c87; --btn-back: #faf5ff;" title="엘레강트 퍼플"></button>
-                                <button type="button" class="preset-btn" data-fill="#0f172a" data-back="#fef08a" style="--btn-fill: #0f172a; --btn-back: #fef08a;" title="테크 사이버"></button>
-                            </div>
-                        </div>
-
-                        <!-- Custom Colors -->
-                        <div class="grid-2-cols colors-pickers">
-                            <div class="form-group color-input-group">
-                                <label for="color-fill">QR 모듈 색상</label>
-                                <div class="color-picker-wrapper">
-                                    <input type="color" id="color-fill" name="fill_color" value="#000000">
-                                    <input type="text" id="color-fill-text" value="#000000" pattern="^#[0-9A-Fa-f]{6}$" placeholder="#000000" aria-label="QR 모듈 색상 헥스코드">
+                            <!-- Logo Upload Box -->
+                            <div class="upload-zone" id="logo-dropzone">
+                                <input
+                                    type="file"
+                                    id="logo-file-input"
+                                    name="logo_file"
+                                    accept="image/*"
+                                    class="visually-hidden"
+                                />
+                                <div
+                                    class="upload-prompt"
+                                    id="upload-prompt-view"
+                                >
+                                    <i
+                                        class="upload-icon"
+                                        data-lucide="upload-cloud"
+                                    ></i>
+                                    <p class="primary-prompt">
+                                        여기에 로고 이미지 드래그 또는
+                                        <span>파일 선택</span>
+                                    </p>
+                                    <p class="secondary-prompt">
+                                        PNG, JPG (투명 배경 PNG 권장)
+                                    </p>
+                                </div>
+                                <div
+                                    class="upload-preview hidden"
+                                    id="upload-preview-view"
+                                >
+                                    <img
+                                        src=""
+                                        alt="업로드된 로고 프리뷰"
+                                        id="uploaded-logo-img"
+                                    />
+                                    <div class="file-details">
+                                        <span
+                                            id="logo-file-name"
+                                            class="filename"
+                                            >logo.png</span
+                                        >
+                                        <span
+                                            id="logo-file-size"
+                                            class="filesize"
+                                            >0 KB</span
+                                        >
+                                    </div>
+                                    <button
+                                        type="button"
+                                        id="btn-remove-logo"
+                                        class="btn-icon danger"
+                                        aria-label="로고 삭제"
+                                    >
+                                        <i data-lucide="trash-2"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="form-group color-input-group">
-                                <label for="color-back">QR 배경 색상</label>
-                                <div class="color-picker-wrapper">
-                                    <input type="color" id="color-back" name="back_color" value="#ffffff">
-                                    <input type="text" id="color-back-text" value="#ffffff" pattern="^#[0-9A-Fa-f]{6}$" placeholder="#ffffff" aria-label="QR 배경 색상 헥스코드">
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Advanced Module Settings -->
-                        <div class="advanced-settings-sub divider-top">
-                            <div class="grid-2-cols">
+                            <!-- Advanced Logo Settings -->
+                            <div class="advanced-settings-sub">
                                 <div class="slider-group">
                                     <div class="slider-header">
-                                        <label for="range-box-size">모듈 크기</label>
-                                        <span class="value-display" id="box-size-val">12px</span>
+                                        <label for="range-logo-fraction"
+                                            >로고 크기 비율</label
+                                        >
+                                        <span
+                                            class="value-display"
+                                            id="logo-fraction-val"
+                                            >20%</span
+                                        >
                                     </div>
-                                    <input type="range" id="range-box-size" name="box_size" min="6" max="24" step="1" value="12">
+                                    <input
+                                        type="range"
+                                        id="range-logo-fraction"
+                                        name="logo_fraction"
+                                        min="0.10"
+                                        max="0.25"
+                                        step="0.01"
+                                        value="0.20"
+                                    />
+                                    <p class="slider-desc">
+                                        QR 코드 손상 한계 대비 안전한 로고 지름
+                                        크기 (권장: 20%)
+                                    </p>
                                 </div>
-                                <div class="slider-group">
-                                    <div class="slider-header">
-                                        <label for="range-version-bump">버전 증가율</label>
-                                        <span class="value-display" id="version-bump-val">+0</span>
+                                <div class="toggle-group sm">
+                                    <div class="toggle-info">
+                                        <span class="toggle-label"
+                                            >로고 여백 자동 제거</span
+                                        >
                                     </div>
-                                    <input type="range" id="range-version-bump" name="version_bump" min="0" max="5" step="1" value="0">
+                                    <label class="switch-container">
+                                        <input
+                                            type="checkbox"
+                                            id="check-trim-logo"
+                                            name="trim_logo"
+                                            checked
+                                        />
+                                        <span class="switch-slider"></span>
+                                    </label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Submit Action -->
-                <button type="submit" class="btn-primary" id="btn-generate">
-                    <span class="btn-text">QR 코드 생성</span>
-                    <i class="btn-icon-right" data-lucide="sparkles"></i>
-                </button>
-            </form>
-        </section>
-
-        <!-- Right Side: Preview & Download -->
-        <section class="preview-panel">
-            <div class="sticky-preview-wrapper">
-                <div class="preview-card card">
-                    <h2 class="preview-title"><i data-lucide="eye"></i> QR 코드 프리뷰</h2>
-                    
-                    <!-- QR Image Frame -->
-                    <div class="qr-output-frame" id="qr-frame">
-                        <div class="qr-placeholder" id="qr-placeholder-view">
-                            <div class="qr-skeleton-art">
-                                <div class="corner-box top-left"></div>
-                                <div class="corner-box top-right"></div>
-                                <div class="corner-box bottom-left"></div>
-                                <div class="inner-dots"></div>
+                    <!-- Custom Styling (Colors & Details) -->
+                    <div class="accordion-item expanded">
+                        <h3 class="accordion-header">
+                            <i data-lucide="palette"></i> 컬러 및 고급 스타일링
+                        </h3>
+                        <div class="accordion-content">
+                            <!-- Color Presets -->
+                            <div class="presets-container">
+                                <span class="presets-label"
+                                    >컬러 테마 프리셋</span
+                                >
+                                <div class="preset-buttons">
+                                    <button
+                                        type="button"
+                                        class="preset-btn active"
+                                        data-fill="#000000"
+                                        data-back="#ffffff"
+                                        style="
+                                            --btn-fill: #000000;
+                                            --btn-back: #ffffff;
+                                        "
+                                        title="클래식 블랙"
+                                    ></button>
+                                    <button
+                                        type="button"
+                                        class="preset-btn"
+                                        data-fill="#1e293b"
+                                        data-back="#f8fafc"
+                                        style="
+                                            --btn-fill: #1e293b;
+                                            --btn-back: #f8fafc;
+                                        "
+                                        title="모던 슬레이트"
+                                    ></button>
+                                    <button
+                                        type="button"
+                                        class="preset-btn"
+                                        data-fill="#1e3a8a"
+                                        data-back="#eff6ff"
+                                        style="
+                                            --btn-fill: #1e3a8a;
+                                            --btn-back: #eff6ff;
+                                        "
+                                        title="딥 블루"
+                                    ></button>
+                                    <button
+                                        type="button"
+                                        class="preset-btn"
+                                        data-fill="#065f46"
+                                        data-back="#ecfdf5"
+                                        style="
+                                            --btn-fill: #065f46;
+                                            --btn-back: #ecfdf5;
+                                        "
+                                        title="보태니컬 그린"
+                                    ></button>
+                                    <button
+                                        type="button"
+                                        class="preset-btn"
+                                        data-fill="#581c87"
+                                        data-back="#faf5ff"
+                                        style="
+                                            --btn-fill: #581c87;
+                                            --btn-back: #faf5ff;
+                                        "
+                                        title="엘레강트 퍼플"
+                                    ></button>
+                                    <button
+                                        type="button"
+                                        class="preset-btn"
+                                        data-fill="#0f172a"
+                                        data-back="#fef08a"
+                                        style="
+                                            --btn-fill: #0f172a;
+                                            --btn-back: #fef08a;
+                                        "
+                                        title="테크 사이버"
+                                    ></button>
+                                </div>
                             </div>
-                            <p>설정을 변경하고 <strong>생성하기</strong>를 클릭하세요.</p>
+
+                            <!-- Custom Colors -->
+                            <div class="grid-2-cols colors-pickers">
+                                <div class="form-group color-input-group">
+                                    <label for="color-fill">QR 모듈 색상</label>
+                                    <div class="color-picker-wrapper">
+                                        <input
+                                            type="color"
+                                            id="color-fill"
+                                            name="fill_color"
+                                            value="#000000"
+                                        />
+                                        <input
+                                            type="text"
+                                            id="color-fill-text"
+                                            value="#000000"
+                                            pattern="^#[0-9A-Fa-f]{6}$"
+                                            placeholder="#000000"
+                                            aria-label="QR 모듈 색상 헥스코드"
+                                        />
+                                    </div>
+                                </div>
+                                <div class="form-group color-input-group">
+                                    <label for="color-back">QR 배경 색상</label>
+                                    <div class="color-picker-wrapper">
+                                        <input
+                                            type="color"
+                                            id="color-back"
+                                            name="back_color"
+                                            value="#ffffff"
+                                        />
+                                        <input
+                                            type="text"
+                                            id="color-back-text"
+                                            value="#ffffff"
+                                            pattern="^#[0-9A-Fa-f]{6}$"
+                                            placeholder="#ffffff"
+                                            aria-label="QR 배경 색상 헥스코드"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Advanced Module Settings -->
+                            <div class="advanced-settings-sub divider-top">
+                                <div class="grid-2-cols">
+                                    <div class="slider-group">
+                                        <div class="slider-header">
+                                            <label for="range-box-size"
+                                                >모듈 크기</label
+                                            >
+                                            <span
+                                                class="value-display"
+                                                id="box-size-val"
+                                                >12px</span
+                                            >
+                                        </div>
+                                        <input
+                                            type="range"
+                                            id="range-box-size"
+                                            name="box_size"
+                                            min="6"
+                                            max="24"
+                                            step="1"
+                                            value="12"
+                                        />
+                                    </div>
+                                    <div class="slider-group">
+                                        <div class="slider-header">
+                                            <label for="range-version-bump"
+                                                >버전 증가율</label
+                                            >
+                                            <span
+                                                class="value-display"
+                                                id="version-bump-val"
+                                                >+0</span
+                                            >
+                                        </div>
+                                        <input
+                                            type="range"
+                                            id="range-version-bump"
+                                            name="version_bump"
+                                            min="0"
+                                            max="5"
+                                            step="1"
+                                            value="0"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="qr-loading-shimmer hidden" id="qr-loading-view">
-                            <div class="shimmer-ring"></div>
-                            <p>QR 코드를 렌더링하는 중...</p>
-                        </div>
-                        <img src="" alt="생성된 QR 코드 이미지" class="qr-result-img hidden" id="qr-result-image">
                     </div>
 
-                    <!-- Metadata details -->
-                    <div class="qr-metadata hidden" id="qr-metadata-view">
-                        <div class="metadata-row">
-                            <span class="meta-label">인코딩 타입</span>
-                            <span class="meta-val" id="meta-type">-</span>
+                    <!-- Submit Action -->
+                    <button type="submit" class="btn-primary" id="btn-generate">
+                        <span class="btn-text">QR 코드 생성</span>
+                        <i class="btn-icon-right" data-lucide="sparkles"></i>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Right Side: Preview & Download -->
+            <section class="preview-panel">
+                <div class="sticky-preview-wrapper">
+                    <div class="preview-card card">
+                        <h2 class="preview-title">
+                            <i data-lucide="eye"></i> QR 코드 프리뷰
+                        </h2>
+
+                        <!-- QR Image Frame -->
+                        <div class="qr-output-frame" id="qr-frame">
+                            <div
+                                class="qr-placeholder"
+                                id="qr-placeholder-view"
+                            >
+                                <div class="qr-skeleton-art">
+                                    <div class="corner-box top-left"></div>
+                                    <div class="corner-box top-right"></div>
+                                    <div class="corner-box bottom-left"></div>
+                                    <div class="inner-dots"></div>
+                                </div>
+                                <p>
+                                    설정을 변경하고 <strong>생성하기</strong>를
+                                    클릭하세요.
+                                </p>
+                            </div>
+                            <div
+                                class="qr-loading-shimmer hidden"
+                                id="qr-loading-view"
+                            >
+                                <div class="shimmer-ring"></div>
+                                <p>QR 코드를 렌더링하는 중...</p>
+                            </div>
+                            <img
+                                src=""
+                                alt="생성된 QR 코드 이미지"
+                                class="qr-result-img hidden"
+                                id="qr-result-image"
+                            />
                         </div>
-                        <div class="metadata-row">
-                            <span class="meta-label">데이터 길이</span>
-                            <span class="meta-val" id="meta-length">-</span>
+
+                        <!-- Metadata details -->
+                        <div class="qr-metadata hidden" id="qr-metadata-view">
+                            <div class="metadata-row">
+                                <span class="meta-label">인코딩 타입</span>
+                                <span class="meta-val" id="meta-type">-</span>
+                            </div>
+                            <div class="metadata-row">
+                                <span class="meta-label">데이터 길이</span>
+                                <span class="meta-val" id="meta-length">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons-group">
+                            <button
+                                type="button"
+                                class="btn-secondary"
+                                id="btn-download"
+                                disabled
+                            >
+                                <i data-lucide="download"></i> PNG 다운로드
+                            </button>
+                            <button
+                                type="button"
+                                class="btn-secondary"
+                                id="btn-copy"
+                                disabled
+                            >
+                                <i data-lucide="copy"></i> 복사하기
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="action-buttons-group">
-                        <button type="button" class="btn-secondary" id="btn-download" disabled>
-                            <i data-lucide="download"></i> PNG 다운로드
-                        </button>
-                        <button type="button" class="btn-secondary" id="btn-copy" disabled>
-                            <i data-lucide="copy"></i> 복사하기
-                        </button>
+                    <!-- Tips / Notes -->
+                    <div class="tip-card card">
+                        <h3 class="tip-title">
+                            <i data-lucide="lightbulb" class="text-accent"></i>
+                            QR 스튜디오 팁
+                        </h3>
+                        <ul class="tip-list">
+                            <li>
+                                중앙 로고 삽입시
+                                <strong>H 레벨(최고 수준)</strong> 오류 복구가
+                                자동으로 활성화됩니다.
+                            </li>
+                            <li>
+                                모듈과 배경 색상의 대비(Contrast)가 명확할수록
+                                스캔율이 높아집니다.
+                            </li>
+                            <li>
+                                로고를 삽입하면 10~20%의 정보 셀이 덮이므로,
+                                데이터 양이 많은 경우 '버전 증가율'을 올려 여유
+                                셀을 늘리는 것을 권장합니다.
+                            </li>
+                        </ul>
                     </div>
                 </div>
+            </section>
+        </main>
 
-                <!-- Tips / Notes -->
-                <div class="tip-card card">
-                    <h3 class="tip-title"><i data-lucide="lightbulb" class="text-accent"></i> QR 스튜디오 팁</h3>
-                    <ul class="tip-list">
-                        <li>중앙 로고 삽입시 <strong>H 레벨(최고 수준)</strong> 오류 복구가 자동으로 활성화됩니다.</li>
-                        <li>모듈과 배경 색상의 대비(Contrast)가 명확할수록 스캔율이 높아집니다.</li>
-                        <li>로고를 삽입하면 10~20%의 정보 셀이 덮이므로, 데이터 양이 많은 경우 '버전 증가율'을 올려 여유 셀을 늘리는 것을 권장합니다.</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-    </main>
+        <footer class="app-footer">
+            <p>
+                &copy; 2026 Homin Lee. Licensed under the
+                <a
+                    href="https://opensource.org/licenses/MIT"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >MIT License</a
+                >.
+            </p>
+        </footer>
 
-    <footer class="app-footer">
-        <p>
-            &copy; 2026 Homin Lee.
-            Licensed under the
-            <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer">MIT License</a>.
-        </p>
-    </footer>
+        <!-- Global Toast Notifications -->
+        <div
+            class="toast-container"
+            id="toast-container"
+            aria-live="polite"
+        ></div>
 
-    <!-- Global Toast Notifications -->
-    <div class="toast-container" id="toast-container" aria-live="polite"></div>
-
-    <script src="app.js"></script>
-</body>
+        <script src="app.js"></script>
+    </body>
 </html>

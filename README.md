@@ -1,4 +1,4 @@
-# Premium QR Code Studio - Docker Compose Deployment Guide
+# QR Code Studio - Docker Compose Deployment Guide
 
 중앙에 맞춤 로고를 삽입하고 실시간 디자인 테마를 조합할 수 있는 프리미엄 QR 코드 생성 스튜디오입니다. 본 가이드는 Docker Compose를 사용하여 서비스를 쉽고 빠르게 프로덕션 및 로컬 환경에 배포하는 방법을 설명합니다.
 
