@@ -66,16 +66,23 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: clip;
+}
+
 body {
     background-color: var(--bg-base);
     color: var(--color-text-main);
     font-family: var(--font-sans);
     line-height: 1.6;
     min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
     padding: 2rem 1.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -177,7 +184,14 @@ body {
     gap: 2rem;
     max-width: 1200px;
     width: 100%;
+    min-width: 0;
     align-items: start;
+}
+
+.controls-panel,
+.preview-panel {
+    min-width: 0;
+    max-width: 100%;
 }
 
 /* 4. Common Card Styles */
@@ -187,6 +201,8 @@ body {
     border-radius: var(--border-radius-lg);
     padding: 2rem;
     box-shadow: var(--shadow-main);
+    min-width: 0;
+    max-width: 100%;
 }
 
 .section-title {
@@ -208,6 +224,8 @@ body {
 /* 5. Tabs Styling */
 .tabs-container {
     margin-block-end: 1.5rem;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .tabs-list {
@@ -216,6 +234,9 @@ body {
     gap: 0.5rem;
     padding-block-end: 0.5rem;
     border-bottom: 1px solid var(--color-border);
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
 }
 
 .tab-btn {
@@ -224,6 +245,7 @@ body {
     color: var(--color-text-muted);
     padding: 0.65rem 1rem;
     min-height: var(--space-touch-min);
+    flex-shrink: 0;
     font-family: var(--font-sans);
     font-size: 0.9rem;
     font-weight: 500;
@@ -260,6 +282,12 @@ body {
 /* 6. Form Groups & Inputs */
 .panels-container {
     margin-block-end: 1.75rem;
+    min-width: 0;
+}
+
+#qr-generator-form {
+    min-width: 0;
+    max-width: 100%;
 }
 
 .input-panel {
@@ -431,6 +459,7 @@ input:focus, textarea:focus, select:focus {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
+    min-width: 0;
 }
 
 /* 7. Accordion Setting Sections */
@@ -765,6 +794,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .preview-card {
@@ -772,6 +803,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    min-width: 0;
 }
 
 .preview-title {
@@ -792,8 +825,9 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 /* QR Code Frame Container */
 .qr-output-frame {
-    width: 280px;
-    height: 280px;
+    width: min(280px, 100%);
+    aspect-ratio: 1;
+    height: auto;
     background: var(--bg-qr-frame);
     border: 1px solid var(--color-border);
     border-radius: var(--border-radius-lg);
@@ -933,6 +967,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     display: flex;
     gap: 0.75rem;
     width: 100%;
+    min-width: 0;
 }
 
 .btn-secondary {
@@ -1103,6 +1138,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 /* 17. Media Queries (Responsive) */
 @media (max-width: 900px) {
+    body {
+        padding: 1.25rem 1rem;
+    }
+
     .app-main-content {
         grid-template-columns: 1fr;
         gap: 1.5rem;
@@ -1110,6 +1149,25 @@ input[type="range"]::-webkit-slider-thumb:hover {
     
     .sticky-preview-wrapper {
         position: static;
+    }
+
+    .card {
+        padding: 1.5rem;
+    }
+
+    .grid-2-cols {
+        grid-template-columns: 1fr;
+    }
+
+    .toast-container {
+        left: 1rem;
+        right: 1rem;
+    }
+
+    .toast {
+        min-width: 0;
+        max-width: none;
+        width: 100%;
     }
 }
 
@@ -1123,24 +1181,11 @@ input[type="range"]::-webkit-slider-thumb:hover {
     }
     
     .grid-2-cols {
-        grid-template-columns: 1fr;
         gap: 0.75rem;
     }
     
     .action-buttons-group {
         flex-direction: column;
-    }
-
-    .toast-container {
-        left: 1rem;
-        right: 1rem;
-        bottom: 1rem;
-    }
-
-    .toast {
-        min-width: 0;
-        max-width: none;
-        width: 100%;
     }
 }
 
