@@ -45,14 +45,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lowercase image name
-        run: |
-          echo "IMAGE_NAME=${{ env.REGISTRY }}/${{ github.repository_owner }}/qr-backend" | tr '[:upper:]' '[:lower:]' >> $GITHUB_ENV
+        id: image
+        run: echo "name=${{ env.REGISTRY }}/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/qr-backend" >> $GITHUB_OUTPUT
 
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.IMAGE_NAME }}
+          images: ${{ steps.image.outputs.name }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -96,14 +96,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lowercase image name
-        run: |
-          echo "IMAGE_NAME=${{ env.REGISTRY }}/${{ github.repository_owner }}/qr-frontend" | tr '[:upper:]' '[:lower:]' >> $GITHUB_ENV
+        id: image
+        run: echo "name=${{ env.REGISTRY }}/$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')/qr-frontend" >> $GITHUB_OUTPUT
 
       - name: Extract Docker metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.IMAGE_NAME }}
+          images: ${{ steps.image.outputs.name }}
           tags: |
             type=ref,event=branch
             type=ref,event=pr
