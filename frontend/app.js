@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let uploadedLogoFile = null;
     let currentQrBlobUrl = null;
     let currentQrBlob = null;
-    let currentQrPayload = 'https://google.com';
+    let currentQrPayload = 'https://homin.dev';
 
     // 3. DOM Elements
     const form = document.getElementById('qr-generator-form');
@@ -41,21 +41,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoFileSize = document.getElementById('logo-file-size');
     const btnRemoveLogo = document.getElementById('btn-remove-logo');
     
+    const DEFAULT_BOX_SIZE = 12;
+    const DEFAULT_VERSION_BUMP = 0;
+    const DEFAULT_FILL_COLOR = '#000000';
+    const DEFAULT_BACK_COLOR = '#ffffff';
+
     // Sliders
     const rangeLogoFraction = document.getElementById('range-logo-fraction');
     const logoFractionVal = document.getElementById('logo-fraction-val');
-    const rangeBoxSize = document.getElementById('range-box-size');
-    const boxSizeVal = document.getElementById('box-size-val');
-    const rangeVersionBump = document.getElementById('range-version-bump');
-    const versionBumpVal = document.getElementById('version-bump-val');
     const checkTrimLogo = document.getElementById('check-trim-logo');
-
-    // Colors
-    const colorFill = document.getElementById('color-fill');
-    const colorFillText = document.getElementById('color-fill-text');
-    const colorBack = document.getElementById('color-back');
-    const colorBackText = document.getElementById('color-back-text');
-    const presetButtons = document.querySelectorAll('.preset-btn');
 
     // Password visibility toggle
     const toggleWifiPass = document.getElementById('toggle-wifi-pass');
@@ -80,37 +74,74 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Auto dismiss after 3.5s
         setTimeout(() => {
-            toast.style.animation = 'slideInRight var(--transition-normal) reverse';
-            toast.addEventListener('animationend', () => {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity var(--transition-normal)';
+            toast.addEventListener('transitionend', () => {
                 toast.remove();
-            });
+            }, { once: true });
         }, 3500);
     }
 
-    // 5. Tab Switching Logic
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const selectedType = button.getAttribute('data-type');
-            
-            // Update Active Buttons
-            tabButtons.forEach(btn => {
-                btn.classList.remove('active');
-                btn.setAttribute('aria-selected', 'false');
-            });
-            button.classList.add('active');
-            button.setAttribute('aria-selected', 'true');
+    // 5. Tab Switching Logic (with keyboard navigation)
+    function updateTabFocusability(activeButton) {
+        tabButtons.forEach((btn) => {
+            btn.setAttribute('tabindex', btn === activeButton ? '0' : '-1');
+        });
+    }
 
-            // Show matching input panel
-            inputPanels.forEach(panel => {
-                panel.classList.remove('active');
-            });
-            const activePanel = document.getElementById(`panel-${selectedType}`);
-            if (activePanel) {
-                activePanel.classList.add('active');
+    function selectTab(button) {
+        const selectedType = button.getAttribute('data-type');
+
+        tabButtons.forEach((btn) => {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-selected', 'false');
+        });
+        button.classList.add('active');
+        button.setAttribute('aria-selected', 'true');
+        updateTabFocusability(button);
+
+        inputPanels.forEach((panel) => {
+            panel.classList.remove('active');
+        });
+        const activePanel = document.getElementById(`panel-${selectedType}`);
+        if (activePanel) {
+            activePanel.classList.add('active');
+        }
+
+        currentQrType = selectedType;
+        clearValidationErrors();
+    }
+
+    tabButtons.forEach((button, index) => {
+        if (button.classList.contains('active')) {
+            button.setAttribute('tabindex', '0');
+        } else {
+            button.setAttribute('tabindex', '-1');
+        }
+
+        button.addEventListener('click', () => {
+            selectTab(button);
+        });
+
+        button.addEventListener('keydown', (e) => {
+            let targetIndex = index;
+
+            if (e.key === 'ArrowRight') {
+                targetIndex = (index + 1) % tabButtons.length;
+            } else if (e.key === 'ArrowLeft') {
+                targetIndex = (index - 1 + tabButtons.length) % tabButtons.length;
+            } else if (e.key === 'Home') {
+                targetIndex = 0;
+            } else if (e.key === 'End') {
+                targetIndex = tabButtons.length - 1;
+            } else {
+                return;
             }
 
-            currentQrType = selectedType;
-            clearValidationErrors();
+            e.preventDefault();
+            const targetButton = tabButtons[targetIndex];
+            selectTab(targetButton);
+            targetButton.focus();
         });
     });
 
@@ -118,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleWifiPass.addEventListener('click', () => {
         const isPassword = inputWifiPass.getAttribute('type') === 'password';
         inputWifiPass.setAttribute('type', isPassword ? 'text' : 'password');
+        toggleWifiPass.setAttribute('aria-pressed', isPassword ? 'true' : 'false');
         
         // Update Icon
         toggleWifiPass.innerHTML = isPassword ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
@@ -125,8 +157,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 7. Logo Upload / Drag and Drop handlers
+    function syncDropzoneState() {
+        const disabled = checkDefaultLogo.checked;
+        logoDropzone.classList.toggle('is-disabled', disabled);
+        logoDropzone.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+        logoDropzone.setAttribute('tabindex', disabled ? '-1' : '0');
+    }
+
     logoDropzone.addEventListener('click', () => {
         if (!checkDefaultLogo.checked) {
+            logoFileInput.click();
+        }
+    });
+
+    logoDropzone.addEventListener('keydown', (e) => {
+        if (checkDefaultLogo.checked) return;
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
             logoFileInput.click();
         }
     });
@@ -200,90 +247,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 8. Default Logo Toggle Mutual Exclusion
     checkDefaultLogo.addEventListener('change', () => {
+        syncDropzoneState();
         if (checkDefaultLogo.checked) {
-            logoDropzone.classList.add('disabled');
-            logoDropzone.style.opacity = '0.5';
-            logoDropzone.style.cursor = 'not-allowed';
             if (uploadedLogoFile) {
-                // hide preview visually but don't delete to remember if unchecked
                 uploadPreviewView.classList.add('hidden');
                 uploadPromptView.classList.remove('hidden');
             }
             showToast('기본 로고(logo.png) 사용이 활성화되었습니다.');
-        } else {
-            logoDropzone.classList.remove('disabled');
-            logoDropzone.style.opacity = '1';
-            logoDropzone.style.cursor = 'pointer';
-            if (uploadedLogoFile) {
-                uploadPromptView.classList.add('hidden');
-                uploadPreviewView.classList.remove('hidden');
-            }
+        } else if (uploadedLogoFile) {
+            uploadPromptView.classList.add('hidden');
+            uploadPreviewView.classList.remove('hidden');
         }
     });
+
+    syncDropzoneState();
 
     // 9. Slider values live synchronization
     rangeLogoFraction.addEventListener('input', (e) => {
         logoFractionVal.textContent = `${Math.round(e.target.value * 100)}%`;
     });
 
-    rangeBoxSize.addEventListener('input', (e) => {
-        boxSizeVal.textContent = `${e.target.value}px`;
-    });
-
-    rangeVersionBump.addEventListener('input', (e) => {
-        versionBumpVal.textContent = `+${e.target.value}`;
-    });
-
-    // 10. Colors Sync (Picker & TextInput)
-    colorFill.addEventListener('input', (e) => {
-        colorFillText.value = e.target.value.toUpperCase();
-        clearPresetActives();
-    });
-    
-    colorFillText.addEventListener('input', (e) => {
-        const val = e.target.value;
-        if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
-            colorFill.value = val;
-            clearPresetActives();
-        }
-    });
-
-    colorBack.addEventListener('input', (e) => {
-        colorBackText.value = e.target.value.toUpperCase();
-        clearPresetActives();
-    });
-
-    colorBackText.addEventListener('input', (e) => {
-        const val = e.target.value;
-        if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
-            colorBack.value = val;
-            clearPresetActives();
-        }
-    });
-
-    function clearPresetActives() {
-        presetButtons.forEach(btn => btn.classList.remove('active'));
-    }
-
-    presetButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            clearPresetActives();
-            btn.classList.add('active');
-            
-            const fill = btn.getAttribute('data-fill');
-            const back = btn.getAttribute('data-back');
-            
-            colorFill.value = fill;
-            colorFillText.value = fill.toUpperCase();
-            
-            colorBack.value = back;
-            colorBackText.value = back.toUpperCase();
-        });
-    });
-
-    // 11. Form input validation helper
+    // 10. Form input validation helper
     function clearValidationErrors() {
         document.querySelectorAll('.error-msg').forEach(el => el.textContent = '');
+    }
+
+    function focusFirstValidationError() {
+        const firstError = document.querySelector('.error-msg:not(:empty)');
+        if (!firstError) return;
+
+        const fieldId = firstError.id.replace(/^error-/, '');
+        const field = document.getElementById(`input-${fieldId}`) || document.getElementById(`select-${fieldId}`);
+        if (field) {
+            field.focus();
+        }
     }
 
     function validateActiveInputs() {
@@ -344,12 +341,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return isValid;
     }
 
+    function setQrFrameBusy(isBusy) {
+        qrFrame.setAttribute('aria-busy', isBusy ? 'true' : 'false');
+    }
+
     // 12. Submit & AJAX Generate Call
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         if (!validateActiveInputs()) {
             showToast('입력 값을 확인해 주세요.', 'error');
+            focusFirstValidationError();
             return;
         }
 
@@ -357,6 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
         qrPlaceholderView.classList.add('hidden');
         qrResultImage.classList.add('hidden');
         qrLoadingView.classList.remove('hidden');
+        setQrFrameBusy(true);
         btnGenerate.disabled = true;
         btnGenerate.querySelector('.btn-text').textContent = 'QR 코드 생성 중...';
         btnDownload.disabled = true;
@@ -391,12 +394,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Append Advanced Configurations
         formData.append('logo_fraction', rangeLogoFraction.value);
-        formData.append('box_size', rangeBoxSize.value);
-        formData.append('version_bump', rangeVersionBump.value);
+        formData.append('box_size', DEFAULT_BOX_SIZE);
+        formData.append('version_bump', DEFAULT_VERSION_BUMP);
         formData.append('trim_logo', checkTrimLogo.checked);
         formData.append('use_default_logo', checkDefaultLogo.checked);
-        formData.append('fill_color', colorFill.value);
-        formData.append('back_color', colorBack.value);
+        formData.append('fill_color', DEFAULT_FILL_COLOR);
+        formData.append('back_color', DEFAULT_BACK_COLOR);
 
         // Append File if uploaded and default logo is NOT checked
         if (uploadedLogoFile && !checkDefaultLogo.checked) {
@@ -440,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
             qrPlaceholderView.classList.remove('hidden');
         } finally {
             qrLoadingView.classList.add('hidden');
+            setQrFrameBusy(false);
             btnGenerate.disabled = false;
             btnGenerate.querySelector('.btn-text').textContent = 'QR 코드 생성';
         }

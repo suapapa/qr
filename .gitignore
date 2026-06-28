@@ -31,3 +31,6 @@ Thumbs.db
 _archive/
 .agents/
 skills-lock.json
+.codex/
+.github/hooks/
+.github/skills/

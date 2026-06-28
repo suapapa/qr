@@ -13,30 +13,29 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
             rel="stylesheet"
         />
 
-        <!-- Lucide Icons -->
-        <script src="https://unpkg.com/lucide@latest"></script>
+        <!-- Lucide Icons (pinned) -->
+        <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
 
         <link rel="stylesheet" href="style.css" />
         <link rel="icon" href="favicon.png" type="image/png" />
     </head>
     <body>
+        <a class="skip-link" href="#qr-generator-form">본문으로 건너뛰기</a>
         <header class="app-header">
             <div class="logo-area">
                 <i class="icon-logo" data-lucide="qr-code"></i>
                 <h1>QR Studio</h1>
-                <span class="badge">PRO</span>
             </div>
             <p class="tagline">
-                중앙 로고 삽입 및 다채로운 커스터마이징을 지원하는 실시간 QR
-                생성기
+                중앙 로고 삽입을 지원하는 실시간 QR 생성기
             </p>
         </header>
 
-        <main class="app-main-content">
+        <main class="app-main-content" id="main-content">
             <!-- Left Side: Controls -->
             <section class="controls-panel card">
                 <h2 class="section-title">
@@ -138,7 +137,7 @@
                                         id="input-url"
                                         name="url"
                                         placeholder="https://example.com"
-                                        value="https://google.com"
+                                        value="https://homin.dev"
                                         required
                                     />
                                 </div>
@@ -200,6 +199,7 @@
                                             id="toggle-wifi-pass"
                                             class="btn-icon"
                                             aria-label="비밀번호 보기 토글"
+                                            aria-pressed="false"
                                         >
                                             <i data-lucide="eye"></i>
                                         </button>
@@ -401,7 +401,7 @@
                             </div>
 
                             <!-- Logo Upload Box -->
-                            <div class="upload-zone" id="logo-dropzone">
+                            <div class="upload-zone" id="logo-dropzone" tabindex="0" role="button" aria-label="로고 이미지 업로드: 드래그하거나 Enter로 파일 선택">
                                 <input
                                     type="file"
                                     id="logo-file-input"
@@ -504,183 +504,9 @@
                         </div>
                     </div>
 
-                    <!-- Custom Styling (Colors & Details) -->
-                    <div class="accordion-item expanded">
-                        <h3 class="accordion-header">
-                            <i data-lucide="palette"></i> 컬러 및 고급 스타일링
-                        </h3>
-                        <div class="accordion-content">
-                            <!-- Color Presets -->
-                            <div class="presets-container">
-                                <span class="presets-label"
-                                    >컬러 테마 프리셋</span
-                                >
-                                <div class="preset-buttons">
-                                    <button
-                                        type="button"
-                                        class="preset-btn active"
-                                        data-fill="#000000"
-                                        data-back="#ffffff"
-                                        style="
-                                            --btn-fill: #000000;
-                                            --btn-back: #ffffff;
-                                        "
-                                        title="클래식 블랙"
-                                    ></button>
-                                    <button
-                                        type="button"
-                                        class="preset-btn"
-                                        data-fill="#1e293b"
-                                        data-back="#f8fafc"
-                                        style="
-                                            --btn-fill: #1e293b;
-                                            --btn-back: #f8fafc;
-                                        "
-                                        title="모던 슬레이트"
-                                    ></button>
-                                    <button
-                                        type="button"
-                                        class="preset-btn"
-                                        data-fill="#1e3a8a"
-                                        data-back="#eff6ff"
-                                        style="
-                                            --btn-fill: #1e3a8a;
-                                            --btn-back: #eff6ff;
-                                        "
-                                        title="딥 블루"
-                                    ></button>
-                                    <button
-                                        type="button"
-                                        class="preset-btn"
-                                        data-fill="#065f46"
-                                        data-back="#ecfdf5"
-                                        style="
-                                            --btn-fill: #065f46;
-                                            --btn-back: #ecfdf5;
-                                        "
-                                        title="보태니컬 그린"
-                                    ></button>
-                                    <button
-                                        type="button"
-                                        class="preset-btn"
-                                        data-fill="#581c87"
-                                        data-back="#faf5ff"
-                                        style="
-                                            --btn-fill: #581c87;
-                                            --btn-back: #faf5ff;
-                                        "
-                                        title="엘레강트 퍼플"
-                                    ></button>
-                                    <button
-                                        type="button"
-                                        class="preset-btn"
-                                        data-fill="#0f172a"
-                                        data-back="#fef08a"
-                                        style="
-                                            --btn-fill: #0f172a;
-                                            --btn-back: #fef08a;
-                                        "
-                                        title="테크 사이버"
-                                    ></button>
-                                </div>
-                            </div>
-
-                            <!-- Custom Colors -->
-                            <div class="grid-2-cols colors-pickers">
-                                <div class="form-group color-input-group">
-                                    <label for="color-fill">QR 모듈 색상</label>
-                                    <div class="color-picker-wrapper">
-                                        <input
-                                            type="color"
-                                            id="color-fill"
-                                            name="fill_color"
-                                            value="#000000"
-                                        />
-                                        <input
-                                            type="text"
-                                            id="color-fill-text"
-                                            value="#000000"
-                                            pattern="^#[0-9A-Fa-f]{6}$"
-                                            placeholder="#000000"
-                                            aria-label="QR 모듈 색상 헥스코드"
-                                        />
-                                    </div>
-                                </div>
-                                <div class="form-group color-input-group">
-                                    <label for="color-back">QR 배경 색상</label>
-                                    <div class="color-picker-wrapper">
-                                        <input
-                                            type="color"
-                                            id="color-back"
-                                            name="back_color"
-                                            value="#ffffff"
-                                        />
-                                        <input
-                                            type="text"
-                                            id="color-back-text"
-                                            value="#ffffff"
-                                            pattern="^#[0-9A-Fa-f]{6}$"
-                                            placeholder="#ffffff"
-                                            aria-label="QR 배경 색상 헥스코드"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Advanced Module Settings -->
-                            <div class="advanced-settings-sub divider-top">
-                                <div class="grid-2-cols">
-                                    <div class="slider-group">
-                                        <div class="slider-header">
-                                            <label for="range-box-size"
-                                                >모듈 크기</label
-                                            >
-                                            <span
-                                                class="value-display"
-                                                id="box-size-val"
-                                                >12px</span
-                                            >
-                                        </div>
-                                        <input
-                                            type="range"
-                                            id="range-box-size"
-                                            name="box_size"
-                                            min="6"
-                                            max="24"
-                                            step="1"
-                                            value="12"
-                                        />
-                                    </div>
-                                    <div class="slider-group">
-                                        <div class="slider-header">
-                                            <label for="range-version-bump"
-                                                >버전 증가율</label
-                                            >
-                                            <span
-                                                class="value-display"
-                                                id="version-bump-val"
-                                                >+0</span
-                                            >
-                                        </div>
-                                        <input
-                                            type="range"
-                                            id="range-version-bump"
-                                            name="version_bump"
-                                            min="0"
-                                            max="5"
-                                            step="1"
-                                            value="0"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Submit Action -->
                     <button type="submit" class="btn-primary" id="btn-generate">
                         <span class="btn-text">QR 코드 생성</span>
-                        <i class="btn-icon-right" data-lucide="sparkles"></i>
                     </button>
                 </form>
             </section>
@@ -694,7 +520,7 @@
                         </h2>
 
                         <!-- QR Image Frame -->
-                        <div class="qr-output-frame" id="qr-frame">
+                        <div class="qr-output-frame" id="qr-frame" aria-live="polite" aria-busy="false">
                             <div
                                 class="qr-placeholder"
                                 id="qr-placeholder-view"
@@ -771,13 +597,9 @@
                                 자동으로 활성화됩니다.
                             </li>
                             <li>
-                                모듈과 배경 색상의 대비(Contrast)가 명확할수록
-                                스캔율이 높아집니다.
-                            </li>
-                            <li>
                                 로고를 삽입하면 10~20%의 정보 셀이 덮이므로,
-                                데이터 양이 많은 경우 '버전 증가율'을 올려 여유
-                                셀을 늘리는 것을 권장합니다.
+                                로고 크기 비율을 20% 이하로 유지하는 것을
+                                권장합니다.
                             </li>
                         </ul>
                     </div>
@@ -804,6 +626,6 @@
             aria-live="polite"
         ></div>
 
-        <script src="app.js"></script>
+        <script src="app.js" defer></script>
     </body>
 </html>
