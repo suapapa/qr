@@ -229,7 +229,7 @@ body {
 }
 
 .type-select-label {
-    display: none;
+    display: none !important;
     font-size: 0.85rem;
     font-weight: 500;
     color: var(--color-text-main);
@@ -237,7 +237,7 @@ body {
 }
 
 .type-select-wrapper {
-    display: none;
+    display: none !important;
     margin-block-end: 0.25rem;
 }
 
@@ -1154,14 +1154,14 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 /* 17. Media Queries (Responsive) */
-@media (max-width: 900px) {
+@media (max-width: 768px) {
     body {
         padding: 1.25rem 1rem;
     }
 
     .type-select-label,
     .type-select-wrapper {
-        display: block;
+        display: block !important;
     }
 
     .tabs-list {

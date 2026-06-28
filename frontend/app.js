@@ -121,8 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (typeSelect) {
-        typeSelect.addEventListener('change', (e) => {
-            selectQrType(e.target.value);
+        typeSelect.addEventListener('change', () => {
+            selectQrType(typeSelect.value);
         });
     }
 
