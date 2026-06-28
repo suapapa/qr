@@ -114,3 +114,11 @@ docker compose up -d --build
     ```bash
     docker compose exec backend python -c 'import urllib.request; urllib.request.urlopen("http://localhost:8000/api/health")'
     ```
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+Copyright (c) 2026 Homin Lee

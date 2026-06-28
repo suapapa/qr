@@ -1135,7 +1135,29 @@ input[type="color"]::-webkit-color-swatch {
     to { transform: translateX(0); opacity: 1; }
 }
 
-/* 16. Media Queries (Responsive) */
+/* 16. App Footer */
+.app-footer {
+    margin-block-start: 2.5rem;
+    padding-block: 1.5rem;
+    text-align: center;
+    border-top: 1px solid var(--color-border);
+}
+
+.app-footer p {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+.app-footer a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.app-footer a:hover {
+    text-decoration: underline;
+}
+
+/* 17. Media Queries (Responsive) */
 @media (max-width: 900px) {
     .app-main-content {
         grid-template-columns: 1fr;
