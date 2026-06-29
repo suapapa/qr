@@ -34,3 +34,8 @@ skills-lock.json
 .codex/
 .github/hooks/
 .github/skills/
+
+# Rust / Cargo
+target/
+**/*.rs.bk
+wasm_qr/pkg/

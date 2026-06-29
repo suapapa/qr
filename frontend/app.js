@@ -1,3 +1,11 @@
+import init, { generate_qr_wasm } from './wasm/wasm_qr.js';
+
+let wasmReady = false;
+init().then(() => {
+    wasmReady = true;
+    console.log("WASM module loaded.");
+}).catch(console.error);
+
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Initialize Lucide Icons
     lucide.createIcons();
@@ -382,57 +390,44 @@ document.addEventListener('DOMContentLoaded', () => {
         // Build Payload string for metadata check later
         resolvePayloadForMetadata();
 
-        // Construct Form Data
-        const formData = new FormData();
-        formData.append('qr_type', currentQrType);
-        
-        // Append panel specific fields
-        if (currentQrType === 'url') {
-            formData.append('url', document.getElementById('input-url').value);
-        } else if (currentQrType === 'wifi') {
-            formData.append('wifi_ssid', document.getElementById('input-wifi-ssid').value);
-            formData.append('wifi_pass', document.getElementById('input-wifi-pass').value);
-            formData.append('wifi_security', document.getElementById('select-wifi-security').value);
-        } else if (currentQrType === 'text') {
-            formData.append('text', document.getElementById('input-text').value);
-        } else if (currentQrType === 'phone') {
-            formData.append('phone', document.getElementById('input-phone').value);
-        } else if (currentQrType === 'sms') {
-            formData.append('sms_phone', document.getElementById('input-sms-phone').value);
-            formData.append('sms_message', document.getElementById('input-sms-message').value);
-        } else if (currentQrType === 'email') {
-            formData.append('email_to', document.getElementById('input-email-to').value);
-            formData.append('email_subject', document.getElementById('input-email-subject').value);
-            formData.append('email_body', document.getElementById('input-email-body').value);
-        }
-
-        // Append Advanced Configurations
-        formData.append('logo_fraction', rangeLogoFraction.value);
-        formData.append('box_size', DEFAULT_BOX_SIZE);
-        formData.append('version_bump', DEFAULT_VERSION_BUMP);
-        formData.append('trim_logo', checkTrimLogo.checked);
-        formData.append('use_default_logo', checkDefaultLogo.checked);
-        formData.append('fill_color', DEFAULT_FILL_COLOR);
-        formData.append('back_color', DEFAULT_BACK_COLOR);
-
-        // Append File if uploaded and default logo is NOT checked
-        if (uploadedLogoFile && !checkDefaultLogo.checked) {
-            formData.append('logo_file', uploadedLogoFile);
-        }
-
         try {
-            const response = await fetch(`${API_BASE}/api/generate`, {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) {
-                const errData = await response.json();
-                throw new Error(errData.detail || 'QR 코드 생성에 실패했습니다.');
+            if (!wasmReady) {
+                throw new Error("WASM 모듈이 아직 로드되지 않았습니다.");
             }
 
+            let logoBytes = null;
+            if (uploadedLogoFile && !checkDefaultLogo.checked) {
+                const arrayBuffer = await uploadedLogoFile.arrayBuffer();
+                logoBytes = new Uint8Array(arrayBuffer);
+            } else if (checkDefaultLogo.checked) {
+                try {
+                    const res = await fetch('logo.png');
+                    if (res.ok) {
+                        const arrayBuffer = await res.arrayBuffer();
+                        logoBytes = new Uint8Array(arrayBuffer);
+                    }
+                } catch(e) {
+                    console.warn("기본 로고를 불러올 수 없습니다.", e);
+                }
+            }
+
+            const logoFraction = parseFloat(rangeLogoFraction.value);
+            const trimLogo = checkTrimLogo.checked;
+
+            const pngBytes = generate_qr_wasm(
+                currentQrPayload,
+                logoBytes,
+                logoFraction,
+                DEFAULT_BOX_SIZE,
+                4, // border
+                DEFAULT_VERSION_BUMP,
+                trimLogo,
+                DEFAULT_FILL_COLOR,
+                DEFAULT_BACK_COLOR
+            );
+
             // Read binary PNG response
-            currentQrBlob = await response.blob();
+            currentQrBlob = new Blob([pngBytes.buffer], { type: 'image/png' });
             
             // Revoke older object URL to free memory
             if (currentQrBlobUrl) {
