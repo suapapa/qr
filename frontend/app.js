@@ -59,6 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const rangeLogoFraction = document.getElementById('range-logo-fraction');
     const logoFractionVal = document.getElementById('logo-fraction-val');
     const checkTrimLogo = document.getElementById('check-trim-logo');
+    const rangeQrBorder = document.getElementById('range-qr-border');
+    const qrBorderVal = document.getElementById('qr-border-val');
 
     // Password visibility toggle
     const toggleWifiPass = document.getElementById('toggle-wifi-pass');
@@ -289,6 +291,10 @@ document.addEventListener('DOMContentLoaded', () => {
         logoFractionVal.textContent = `${Math.round(e.target.value * 100)}%`;
     });
 
+    rangeQrBorder.addEventListener('input', (e) => {
+        qrBorderVal.textContent = `${e.target.value}칸`;
+    });
+
     // 10. Form input validation helper
     function clearValidationErrors() {
         document.querySelectorAll('.error-msg').forEach(el => el.textContent = '');
@@ -412,6 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const logoFraction = parseFloat(rangeLogoFraction.value);
+            const qrBorder = parseInt(rangeQrBorder.value, 10);
             const trimLogo = checkTrimLogo.checked;
 
             const pngBytes = generate_qr_wasm(
@@ -419,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 logoBytes,
                 logoFraction,
                 DEFAULT_BOX_SIZE,
-                4, // border
+                qrBorder,
                 DEFAULT_VERSION_BUMP,
                 trimLogo,
                 DEFAULT_FILL_COLOR,

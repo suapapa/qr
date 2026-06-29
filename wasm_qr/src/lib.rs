@@ -21,7 +21,7 @@ fn make_odd(v: u32) -> u32 {
 }
 
 fn compute_logo_layout(module_count: u32, logo_fraction: f32, padding_modules: u32) -> (u32, u32) {
-    let max_clear = std::cmp::max(5, (module_count as f32 * 0.25) as u32);
+    let max_clear = std::cmp::max(5, (module_count as f32 * 0.35) as u32);
     let max_clear = make_odd(max_clear);
 
     let mut requested_logo = std::cmp::max(3, (module_count as f32 * logo_fraction) as u32);
@@ -92,6 +92,11 @@ pub fn generate_qr_wasm(
         Version::Normal(v) => v,
         Version::Micro(_) => 1,
     };
+    
+    // Automatically bump min version if logo is used so we have enough modules to adjust size
+    if logo_bytes.is_some() && target_v < 3 {
+        target_v = 3;
+    }
     
     target_v += version_bump as i16;
     if target_v > 40 {
