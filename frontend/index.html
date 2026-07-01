@@ -25,16 +25,8 @@
         <meta property="twitter:description" content="중앙에 맞춤 로고를 삽입하고 디자인을 실시간으로 설정해 고품질 QR 코드를 제작하는 프리미엄 QR 코드 생성 스튜디오" />
         <meta property="twitter:image" content="https://suapapa.github.io/qr/og-image.jpg" />
 
-        <!-- Google Fonts: Inter -->
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
-            rel="stylesheet"
-        />
-
-        <!-- Lucide Icons (pinned) -->
-        <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
+        <!-- System UI font stack (no external CDN) -->
+        <script src="vendor/lucide.min.js" defer></script>
 
         <link rel="stylesheet" href="style.css" />
         <link rel="icon" href="favicon.svg" type="image/svg+xml" />
@@ -42,21 +34,22 @@
     <body>
         <a class="skip-link" href="#qr-generator-form" data-i18n="skip_to_content">본문으로 건너뛰기</a>
         <header class="app-header">
-            <div class="logo-area">
-                <i class="icon-logo" data-lucide="qr-code"></i>
-                <h1 data-i18n="title">QR Studio</h1>
-            </div>
-            <!-- Language Selector -->
-            <div class="language-selector">
-                <i data-lucide="languages" class="lang-icon"></i>
-                <div class="select-wrapper lang-select-wrapper">
-                    <select id="select-language" name="language" aria-label="언어 선택 / Select Language">
-                        <option value="ko">한국어</option>
-                        <option value="en">English</option>
-                        <option value="ja">日本語</option>
-                        <option value="zh">中文</option>
-                        <option value="pl">Polski</option>
-                    </select>
+            <div class="header-row">
+                <div class="logo-area">
+                    <i class="icon-logo" data-lucide="qr-code"></i>
+                    <h1 data-i18n="title">QR Studio</h1>
+                </div>
+                <div class="language-selector">
+                    <i data-lucide="languages" class="lang-icon"></i>
+                    <div class="select-wrapper lang-select-wrapper">
+                        <select id="select-language" name="language" aria-label="언어 선택 / Select Language">
+                            <option value="ko">한국어</option>
+                            <option value="en">English</option>
+                            <option value="ja">日本語</option>
+                            <option value="zh">中文</option>
+                            <option value="pl">Polski</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <p class="tagline" data-i18n="tagline">
@@ -602,7 +595,7 @@
                         </h2>
 
                         <!-- QR Image Frame -->
-                        <div class="qr-output-frame" id="qr-frame" aria-live="polite" aria-busy="false">
+                        <div class="qr-output-frame" id="qr-frame" aria-live="off" aria-busy="false">
                             <div
                                 class="qr-placeholder"
                                 id="qr-placeholder-view"
@@ -668,20 +661,25 @@
                     </div>
 
                     <!-- Error Correction Level (ECC) Section -->
-                    <div class="ecc-card card" style="margin-block-start: 1.5rem;">
-                        <h3 class="tip-title" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; margin-block-end: 1rem;">
-                            <i data-lucide="shield-check" class="text-accent" style="width: 1.25rem; height: 1.25rem;"></i>
+                    <div class="ecc-card card">
+                        <h3 class="ecc-card__title tip-title" id="ecc-title">
+                            <i data-lucide="shield-check" class="text-accent ecc-card__icon"></i>
                             <span data-i18n="ecc_title">오류 복구 수준 (ECC)</span>
                         </h3>
-                        <div class="select-wrapper" style="margin-block-end: 0.75rem;">
-                            <select id="select-error-correction" name="error_correction">
+                        <div class="select-wrapper ecc-card__select">
+                            <select
+                                id="select-error-correction"
+                                name="error_correction"
+                                aria-labelledby="ecc-title"
+                                aria-describedby="ecc-desc"
+                            >
                                 <option value="L" data-i18n="ecc_option_l">L (낮음 - 약 7% 복구)</option>
                                 <option value="M" selected data-i18n="ecc_option_m">M (보통 - 약 15% 복구)</option>
                                 <option value="Q" data-i18n="ecc_option_q">Q (높음 - 약 25% 복구)</option>
                                 <option value="H" data-i18n="ecc_option_h">H (최고 - 약 30% 복구)</option>
                             </select>
                         </div>
-                        <p class="slider-desc" id="ecc-desc" style="font-size: 0.8rem; line-height: 1.4; margin: 0; color: var(--color-text-muted);" data-i18n="ecc_desc">
+                        <p class="slider-desc ecc-card__desc" id="ecc-desc" data-i18n="ecc_desc">
                             오류 복구 수준이 높을수록 QR 코드가 일부 가려지거나 훼손되어도 인식률이 향상됩니다.
                         </p>
                     </div>

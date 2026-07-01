@@ -72,7 +72,7 @@ const translations = {
         
         // Preview
         preview_title: "QR 코드 프리뷰",
-        placeholder_text: "설정을 변경하고 <strong>생성하기</strong>를 클릭하세요.",
+        placeholder_text: "설정을 변경하고 <strong>QR 코드 생성</strong>을 클릭하세요.",
         loading_text: "QR 코드를 렌더링하는 중...",
         qr_result_alt: "생성된 QR 코드 이미지",
         meta_type_label: "인코딩 타입",
@@ -185,7 +185,7 @@ const translations = {
         btn_generating: "Generating QR Code...",
         
         preview_title: "QR Code Preview",
-        placeholder_text: "Adjust settings and click <strong>Generate</strong>.",
+        placeholder_text: "Adjust settings and click <strong>Generate QR Code</strong>.",
         loading_text: "Rendering QR Code...",
         qr_result_alt: "Generated QR Code Image",
         meta_type_label: "Encoding Type",
@@ -296,7 +296,7 @@ const translations = {
         btn_generating: "QRコード生成中...",
         
         preview_title: "QRコードプレビュー",
-        placeholder_text: "設定を変更し、<strong>生成する</strong>をクリックしてください。",
+        placeholder_text: "設定を変更し、<strong>QRコード生成</strong>をクリックしてください。",
         loading_text: "QRコードをレンダリング中...",
         qr_result_alt: "生成されたQRコード画像",
         meta_type_label: "エンコードタイプ",
@@ -407,7 +407,7 @@ const translations = {
         btn_generating: "正在生成 QR 码...",
         
         preview_title: "QR 码预览",
-        placeholder_text: "调整设置并点击<strong>开始生成</strong>。",
+        placeholder_text: "调整设置并点击<strong>生成 QR 码</strong>。",
         loading_text: "正在渲染 QR 码...",
         qr_result_alt: "生成的 QR 码图片",
         meta_type_label: "编码类型",
@@ -518,7 +518,7 @@ const translations = {
         btn_generating: "Generowanie kodu QR...",
         
         preview_title: "Podgląd kodu QR",
-        placeholder_text: "Dostosuj ustawienia i kliknij <strong>Generuj</strong>.",
+        placeholder_text: "Dostosuj ustawienia i kliknij <strong>Generuj kod QR</strong>.",
         loading_text: "Renderowanie kodu QR...",
         qr_result_alt: "Generowany obraz kodu QR",
         meta_type_label: "Typ kodowania",
@@ -728,6 +728,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function showToast(message, type = 'success') {
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
+        toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
         
         const iconName = type === 'success' ? 'check-circle' : 'alert-circle';
         toast.innerHTML = `
@@ -778,6 +779,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         setQrFrameBusy(true);
         btnGenerate.disabled = true;
+        btnGenerate.setAttribute('aria-busy', 'true');
         btnGenerate.querySelector('.btn-text').textContent = translations[currentLang].btn_generating;
         btnDownload.disabled = true;
         btnCopy.disabled = true;
@@ -856,6 +858,7 @@ document.addEventListener('DOMContentLoaded', () => {
             qrLoadingView.classList.add('hidden');
             setQrFrameBusy(false);
             btnGenerate.disabled = false;
+            btnGenerate.setAttribute('aria-busy', 'false');
             btnGenerate.querySelector('.btn-text').textContent = translations[currentLang].btn_generate;
         }
     }
@@ -956,9 +959,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (hasLogo) {
             selectErrorCorrection.value = 'H';
             selectErrorCorrection.disabled = true;
+            selectErrorCorrection.setAttribute('aria-disabled', 'true');
             eccDesc.textContent = translations[currentLang].ecc_desc_logo;
         } else {
             selectErrorCorrection.disabled = false;
+            selectErrorCorrection.setAttribute('aria-disabled', 'false');
             selectErrorCorrection.value = userSelectedEcc;
             eccDesc.textContent = translations[currentLang].ecc_desc;
         }
