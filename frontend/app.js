@@ -576,10 +576,19 @@ const QUERY_TYPE_ALIASES = {
 };
 const VALID_QR_TYPES = new Set(['url', 'wifi', 'text', 'phone', 'sms', 'email']);
 
+function decodeQueryValue(value) {
+    if (value === null || value === '') return value;
+    try {
+        return decodeURIComponent(value);
+    } catch {
+        return value;
+    }
+}
+
 function getQueryParam(params, ...keys) {
     for (const key of keys) {
         if (!params.has(key)) continue;
-        const value = params.get(key);
+        const value = decodeQueryValue(params.get(key));
         if (value !== null && value !== '') return value;
     }
     return null;
