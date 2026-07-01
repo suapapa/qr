@@ -569,13 +569,115 @@ const translations = {
     }
 };
 
+const DEFAULT_URL = 'https://homin.dev';
+const QUERY_TYPE_ALIASES = {
+    txt: 'text',
+    tel: 'phone',
+};
+const VALID_QR_TYPES = new Set(['url', 'wifi', 'text', 'phone', 'sms', 'email']);
+
+function getQueryParam(params, ...keys) {
+    for (const key of keys) {
+        if (!params.has(key)) continue;
+        const value = params.get(key);
+        if (value !== null && value !== '') return value;
+    }
+    return null;
+}
+
+function parseQueryConfig(search = window.location.search) {
+    const params = new URLSearchParams(search);
+    if (params.toString() === '') return null;
+
+    let qrType = getQueryParam(params, 'type');
+    if (qrType) {
+        qrType = QUERY_TYPE_ALIASES[qrType.toLowerCase()] || qrType.toLowerCase();
+    }
+
+    if (!qrType || !VALID_QR_TYPES.has(qrType)) {
+        if (getQueryParam(params, 'ssid') !== null) qrType = 'wifi';
+        else if (getQueryParam(params, 'to', 'email') !== null) qrType = 'email';
+        else if (getQueryParam(params, 'message', 'msg') !== null && getQueryParam(params, 'phone', 'tel', 'number') !== null) qrType = 'sms';
+        else if (getQueryParam(params, 'phone', 'tel', 'number') !== null) qrType = 'phone';
+        else if (getQueryParam(params, 'url') !== null) qrType = 'url';
+        else if (getQueryParam(params, 'content', 'text') !== null) qrType = 'text';
+    }
+
+    if (!qrType || !VALID_QR_TYPES.has(qrType)) return null;
+    return { type: qrType, params };
+}
+
+function applyQueryFields(config) {
+    const { type, params } = config;
+    const get = (...keys) => getQueryParam(params, ...keys);
+
+    switch (type) {
+        case 'url': {
+            const url = get('url', 'content');
+            if (url) document.getElementById('input-url').value = url;
+            break;
+        }
+        case 'wifi': {
+            const ssid = get('ssid');
+            if (ssid) document.getElementById('input-wifi-ssid').value = ssid;
+            const pass = get('pass', 'password');
+            if (pass !== null) document.getElementById('input-wifi-pass').value = pass;
+            const sec = get('security', 'sec');
+            if (sec) {
+                const secUpper = sec.toUpperCase();
+                const select = document.getElementById('select-wifi-security');
+                if (secUpper === 'NOPASS' || secUpper === 'OPEN') {
+                    select.value = 'nopass';
+                } else if (secUpper === 'WPA' || secUpper === 'WEP') {
+                    select.value = secUpper;
+                }
+            }
+            break;
+        }
+        case 'text': {
+            const text = get('content', 'text');
+            if (text) document.getElementById('input-text').value = text;
+            break;
+        }
+        case 'phone': {
+            const phone = get('phone', 'tel', 'number', 'content');
+            if (phone) document.getElementById('input-phone').value = phone;
+            break;
+        }
+        case 'sms': {
+            const phone = get('phone', 'tel', 'number');
+            if (phone) document.getElementById('input-sms-phone').value = phone;
+            const msg = get('message', 'msg', 'body', 'content');
+            if (msg) document.getElementById('input-sms-message').value = msg;
+            break;
+        }
+        case 'email': {
+            const to = get('to', 'email');
+            if (to) document.getElementById('input-email-to').value = to;
+            const subject = get('subject', 'sub');
+            if (subject) document.getElementById('input-email-subject').value = subject;
+            const body = get('body');
+            if (body) document.getElementById('input-email-body').value = body;
+            break;
+        }
+    }
+}
+
+const queryConfig = parseQueryConfig();
+
 let wasmReady = false;
+let domReady = false;
+
+function tryInitialGeneration() {
+    if (wasmReady && domReady && typeof window.__tryGenerateInitialQR === 'function') {
+        window.__tryGenerateInitialQR();
+    }
+}
+
 init().then(() => {
     wasmReady = true;
     console.log("WASM module loaded.");
-    if (window.triggerInitialGeneration) {
-        window.triggerInitialGeneration();
-    }
+    tryInitialGeneration();
 }).catch(console.error);
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -586,11 +688,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const API_BASE = (window.location.port === '5500' || window.location.port === '3000' || window.location.port === '5173' || window.location.protocol === 'file:')
         ? 'http://localhost:8000'
         : '';
-    let currentQrType = 'url';
+    let currentQrType = queryConfig?.type || 'url';
     let uploadedLogoFile = null;
     let currentQrBlobUrl = null;
     let currentQrBlob = null;
-    let currentQrPayload = 'https://homin.dev';
+    let currentQrPayload = '';
 
     // Language state
     function getBrowserLanguage() {
@@ -660,6 +762,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Toast notifications container
     const toastContainer = document.getElementById('toast-container');
+
+    // Apply URL query parameters before defaults or any QR generation
+    if (queryConfig) {
+        applyQueryFields(queryConfig);
+    } else {
+        document.getElementById('input-url').value = DEFAULT_URL;
+    }
 
     // 4. Translation Helper Function
     function setLanguage(lang) {
@@ -922,94 +1031,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function applyQueryParams() {
-        const params = new URLSearchParams(window.location.search);
-        if (params.toString() === '') return false;
-
-        const TYPE_ALIASES = {
-            txt: 'text',
-            tel: 'phone',
-        };
-        const VALID_TYPES = new Set(['url', 'wifi', 'text', 'phone', 'sms', 'email']);
-
-        const get = (...keys) => {
-            for (const key of keys) {
-                if (!params.has(key)) continue;
-                const value = params.get(key);
-                if (value !== null && value !== '') return value;
-            }
-            return null;
-        };
-
-        let qrType = get('type');
-        if (qrType) {
-            qrType = TYPE_ALIASES[qrType.toLowerCase()] || qrType.toLowerCase();
-        }
-
-        if (!qrType || !VALID_TYPES.has(qrType)) {
-            if (get('ssid') !== null) qrType = 'wifi';
-            else if (get('to', 'email') !== null) qrType = 'email';
-            else if (get('message', 'msg') !== null && get('phone', 'tel', 'number') !== null) qrType = 'sms';
-            else if (get('phone', 'tel', 'number') !== null) qrType = 'phone';
-            else if (get('url') !== null) qrType = 'url';
-            else if (get('content', 'text') !== null) qrType = 'text';
-        }
-
-        if (!qrType || !VALID_TYPES.has(qrType)) return false;
-
-        switch (qrType) {
-            case 'url': {
-                const url = get('url', 'content');
-                if (url) document.getElementById('input-url').value = url;
-                break;
-            }
-            case 'wifi': {
-                const ssid = get('ssid');
-                if (ssid) document.getElementById('input-wifi-ssid').value = ssid;
-                const pass = get('pass', 'password');
-                if (pass !== null) document.getElementById('input-wifi-pass').value = pass;
-                const sec = get('security', 'sec');
-                if (sec) {
-                    const secUpper = sec.toUpperCase();
-                    const select = document.getElementById('select-wifi-security');
-                    if (secUpper === 'NOPASS' || secUpper === 'OPEN') {
-                        select.value = 'nopass';
-                    } else if (secUpper === 'WPA' || secUpper === 'WEP') {
-                        select.value = secUpper;
-                    }
-                }
-                break;
-            }
-            case 'text': {
-                const text = get('content', 'text');
-                if (text) document.getElementById('input-text').value = text;
-                break;
-            }
-            case 'phone': {
-                const phone = get('phone', 'tel', 'number', 'content');
-                if (phone) document.getElementById('input-phone').value = phone;
-                break;
-            }
-            case 'sms': {
-                const phone = get('phone', 'tel', 'number');
-                if (phone) document.getElementById('input-sms-phone').value = phone;
-                const msg = get('message', 'msg', 'body', 'content');
-                if (msg) document.getElementById('input-sms-message').value = msg;
-                break;
-            }
-            case 'email': {
-                const to = get('to', 'email');
-                if (to) document.getElementById('input-email-to').value = to;
-                const subject = get('subject', 'sub');
-                if (subject) document.getElementById('input-email-subject').value = subject;
-                const body = get('body');
-                if (body) document.getElementById('input-email-body').value = body;
-                break;
-            }
-        }
-
-        selectQrType(qrType, true);
-        return true;
+    if (queryConfig) {
+        selectQrType(queryConfig.type, true);
     }
 
     function selectTab(button) {
@@ -1392,13 +1415,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize translations
     setLanguage(currentLang);
 
-    applyQueryParams();
-
-    window.triggerInitialGeneration = () => {
-        if (wasmReady) {
-            generateQR(true);
-        }
-    };
-
-    window.triggerInitialGeneration();
+    window.__tryGenerateInitialQR = () => generateQR(true);
+    domReady = true;
+    tryInitialGeneration();
 });
