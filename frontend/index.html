@@ -524,7 +524,7 @@
                                         <span
                                             class="value-display"
                                             id="qr-border-val"
-                                            >4칸</span
+                                            >2칸</span
                                         >
                                     </div>
                                     <input
@@ -534,7 +534,7 @@
                                         min="0"
                                         max="10"
                                         step="1"
-                                        value="4"
+                                        value="2"
                                     />
                                     <p class="slider-desc">
                                         QR 주변 여백 모듈 수 (표준: 4칸, 최신 기기: 1~2칸 권장)
@@ -640,23 +640,23 @@
                         </div>
                     </div>
 
-                    <!-- Tips / Notes -->
-                    <div class="tip-card card">
-                        <h3 class="tip-title">
-                            <i data-lucide="lightbulb" class="text-accent"></i>
-                            QR 스튜디오 팁
+                    <!-- Error Correction Level (ECC) Section -->
+                    <div class="ecc-card card" style="margin-block-start: 1.5rem;">
+                        <h3 class="tip-title" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; margin-block-end: 1rem;">
+                            <i data-lucide="shield-check" class="text-accent" style="width: 1.25rem; height: 1.25rem;"></i>
+                            오류 복구 수준 (ECC)
                         </h3>
-                        <ul class="tip-list">
-                            <li>
-                                중앙 로고 삽입 시 <strong>H 레벨(최고 수준)</strong> 오류 복구가
-                                자동으로 적용되며, 짧은 데이터라도 로고가 잘리지 않도록 
-                                QR 해상도(버전)가 자동 보정됩니다.
-                            </li>
-                            <li>
-                                디자인을 더 깔끔하게 만들려면 테두리 여백을 1~2칸으로 줄여보세요. 
-                                최신 기기에서는 얇은 여백으로도 충분히 스캔 가능합니다.
-                            </li>
-                        </ul>
+                        <div class="select-wrapper" style="margin-block-end: 0.75rem;">
+                            <select id="select-error-correction" name="error_correction">
+                                <option value="L">L (낮음 - 약 7% 복구)</option>
+                                <option value="M" selected>M (보통 - 약 15% 복구)</option>
+                                <option value="Q">Q (높음 - 약 25% 복구)</option>
+                                <option value="H">H (최고 - 약 30% 복구)</option>
+                            </select>
+                        </div>
+                        <p class="slider-desc" id="ecc-desc" style="font-size: 0.8rem; line-height: 1.4; margin: 0; color: var(--color-text-muted);">
+                            오류 복구 수준이 높을수록 QR 코드가 일부 가려지거나 훼손되어도 인식률이 향상됩니다.
+                        </p>
                     </div>
                 </div>
             </section>

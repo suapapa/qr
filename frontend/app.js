@@ -4,6 +4,9 @@ let wasmReady = false;
 init().then(() => {
     wasmReady = true;
     console.log("WASM module loaded.");
+    if (window.triggerInitialGeneration) {
+        window.triggerInitialGeneration();
+    }
 }).catch(console.error);
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -62,6 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const rangeQrBorder = document.getElementById('range-qr-border');
     const qrBorderVal = document.getElementById('qr-border-val');
 
+    // Error correction elements & state
+    const selectErrorCorrection = document.getElementById('select-error-correction');
+    const eccDesc = document.getElementById('ecc-desc');
+    let userSelectedEcc = 'M';
+
     // Password visibility toggle
     const toggleWifiPass = document.getElementById('toggle-wifi-pass');
     const inputWifiPass = document.getElementById('input-wifi-pass');
@@ -92,6 +100,124 @@ document.addEventListener('DOMContentLoaded', () => {
             }, { once: true });
         }, 3500);
     }
+
+    // Debounce Helper
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+    }
+
+    // QR Code Generation function (common)
+    async function generateQR(isSilent = false) {
+        if (!validateActiveInputs()) {
+            // If it's a silent generation, we don't annoy the user with error alerts while they type
+            if (!isSilent) {
+                showToast('입력 값을 확인해 주세요.', 'error');
+                focusFirstValidationError();
+            }
+            return;
+        }
+
+        // Show/Update loading state
+        if (!isSilent) {
+            qrPlaceholderView.classList.add('hidden');
+            qrResultImage.classList.add('hidden');
+            qrLoadingView.classList.remove('hidden');
+        } else {
+            // Apply slight transparency to indicate transition when silently updating
+            qrResultImage.style.opacity = '0.5';
+        }
+        
+        setQrFrameBusy(true);
+        btnGenerate.disabled = true;
+        btnGenerate.querySelector('.btn-text').textContent = 'QR 코드 생성 중...';
+        btnDownload.disabled = true;
+        btnCopy.disabled = true;
+
+        resolvePayloadForMetadata();
+
+        try {
+            if (!wasmReady) {
+                throw new Error("WASM 모듈이 아직 로드되지 않았습니다.");
+            }
+
+            let logoBytes = null;
+            if (uploadedLogoFile && !checkDefaultLogo.checked) {
+                const arrayBuffer = await uploadedLogoFile.arrayBuffer();
+                logoBytes = new Uint8Array(arrayBuffer);
+            } else if (checkDefaultLogo.checked) {
+                try {
+                    const res = await fetch('logo.png');
+                    if (res.ok) {
+                        const arrayBuffer = await res.arrayBuffer();
+                        logoBytes = new Uint8Array(arrayBuffer);
+                    }
+                } catch(e) {
+                    console.warn("기본 로고를 불러올 수 없습니다.", e);
+                }
+            }
+
+            const logoFraction = parseFloat(rangeLogoFraction.value);
+            const qrBorder = parseInt(rangeQrBorder.value, 10);
+            const trimLogo = checkTrimLogo.checked;
+
+            const pngBytes = generate_qr_wasm(
+                currentQrPayload,
+                logoBytes,
+                logoFraction,
+                DEFAULT_BOX_SIZE,
+                qrBorder,
+                DEFAULT_VERSION_BUMP,
+                trimLogo,
+                DEFAULT_FILL_COLOR,
+                DEFAULT_BACK_COLOR,
+                selectErrorCorrection.value
+            );
+
+            currentQrBlob = new Blob([pngBytes.buffer], { type: 'image/png' });
+            
+            if (currentQrBlobUrl) {
+                URL.revokeObjectURL(currentQrBlobUrl);
+            }
+            
+            currentQrBlobUrl = URL.createObjectURL(currentQrBlob);
+
+            qrResultImage.src = currentQrBlobUrl;
+            qrPlaceholderView.classList.add('hidden');
+            qrLoadingView.classList.add('hidden');
+            qrResultImage.classList.remove('hidden');
+            qrResultImage.style.opacity = '1';
+            
+            btnDownload.disabled = false;
+            btnCopy.disabled = false;
+            renderMetadataDisplay();
+            
+            if (!isSilent) {
+                showToast('성공적으로 QR 코드가 생성되었습니다!');
+            }
+
+        } catch (error) {
+            console.error('Error generating QR:', error);
+            if (!isSilent) {
+                showToast(error.message || '서버 연결에 실패했습니다. 백엔드가 실행 중인지 확인하세요.', 'error');
+            }
+            if (!currentQrBlobUrl) {
+                qrPlaceholderView.classList.remove('hidden');
+            }
+        } finally {
+            qrLoadingView.classList.add('hidden');
+            setQrFrameBusy(false);
+            btnGenerate.disabled = false;
+            btnGenerate.querySelector('.btn-text').textContent = 'QR 코드 생성';
+        }
+    }
+
+    const debouncedGenerateQR = debounce(() => {
+        generateQR(true);
+    }, 250);
 
     // 5. Tab Switching Logic (with keyboard navigation)
     function updateTabFocusability(activeButton) {
@@ -124,6 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentQrType = selectedType;
         clearValidationErrors();
+        debouncedGenerateQR();
     }
 
     function selectTab(button) {
@@ -178,6 +305,26 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update Icon
         toggleWifiPass.innerHTML = isPassword ? '<i data-lucide="eye-off"></i>' : '<i data-lucide="eye"></i>';
         lucide.createIcons();
+    });
+
+    function syncEccState() {
+        const hasLogo = (uploadedLogoFile !== null && !checkDefaultLogo.checked) || checkDefaultLogo.checked;
+        if (hasLogo) {
+            selectErrorCorrection.value = 'H';
+            selectErrorCorrection.disabled = true;
+            eccDesc.textContent = '중앙 로고 삽입 시 H 레벨(최고 수준) 오류 복구가 자동으로 적용되며, 짧은 데이터라도 로고가 잘리지 않도록 QR 해상도(버전)가 자동 보정됩니다.';
+        } else {
+            selectErrorCorrection.disabled = false;
+            selectErrorCorrection.value = userSelectedEcc;
+            eccDesc.textContent = '오류 복구 수준이 높을수록 QR 코드가 일부 가려지거나 훼손되어도 인식률이 향상됩니다.';
+        }
+    }
+
+    selectErrorCorrection.addEventListener('change', () => {
+        if (!selectErrorCorrection.disabled) {
+            userSelectedEcc = selectErrorCorrection.value;
+        }
+        debouncedGenerateQR();
     });
 
     // 7. Logo Upload / Drag and Drop handlers
@@ -237,6 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         uploadedLogoFile = file;
+        syncEccState();
 
         // Size Formatting
         const sizeKB = (file.size / 1024).toFixed(1);
@@ -249,6 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
             uploadedLogoImg.src = e.target.result;
             uploadPromptView.classList.add('hidden');
             uploadPreviewView.classList.remove('hidden');
+            generateQR(true);
         };
         reader.readAsDataURL(file);
         
@@ -267,11 +416,14 @@ document.addEventListener('DOMContentLoaded', () => {
         uploadPreviewView.classList.add('hidden');
         uploadPromptView.classList.remove('hidden');
         showToast('로고 이미지가 제거되었습니다.');
+        syncEccState();
+        generateQR(true);
     }
 
     // 8. Default Logo Toggle Mutual Exclusion
     checkDefaultLogo.addEventListener('change', () => {
         syncDropzoneState();
+        syncEccState();
         if (checkDefaultLogo.checked) {
             if (uploadedLogoFile) {
                 uploadPreviewView.classList.add('hidden');
@@ -282,17 +434,21 @@ document.addEventListener('DOMContentLoaded', () => {
             uploadPromptView.classList.add('hidden');
             uploadPreviewView.classList.remove('hidden');
         }
+        generateQR(true);
     });
 
     syncDropzoneState();
+    syncEccState();
 
     // 9. Slider values live synchronization
     rangeLogoFraction.addEventListener('input', (e) => {
         logoFractionVal.textContent = `${Math.round(e.target.value * 100)}%`;
+        debouncedGenerateQR();
     });
 
     rangeQrBorder.addEventListener('input', (e) => {
         qrBorderVal.textContent = `${e.target.value}칸`;
+        debouncedGenerateQR();
     });
 
     // 10. Form input validation helper
@@ -376,93 +532,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // 12. Submit & AJAX Generate Call
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        if (!validateActiveInputs()) {
-            showToast('입력 값을 확인해 주세요.', 'error');
-            focusFirstValidationError();
-            return;
-        }
+        await generateQR(false);
+    });
 
-        // Show Loading state
-        qrPlaceholderView.classList.add('hidden');
-        qrResultImage.classList.add('hidden');
-        qrLoadingView.classList.remove('hidden');
-        setQrFrameBusy(true);
-        btnGenerate.disabled = true;
-        btnGenerate.querySelector('.btn-text').textContent = 'QR 코드 생성 중...';
-        btnDownload.disabled = true;
-        btnCopy.disabled = true;
+    // 12-2. Real-time Auto-generation
+    form.addEventListener('input', () => {
+        debouncedGenerateQR();
+    });
 
-        // Build Payload string for metadata check later
-        resolvePayloadForMetadata();
-
-        try {
-            if (!wasmReady) {
-                throw new Error("WASM 모듈이 아직 로드되지 않았습니다.");
-            }
-
-            let logoBytes = null;
-            if (uploadedLogoFile && !checkDefaultLogo.checked) {
-                const arrayBuffer = await uploadedLogoFile.arrayBuffer();
-                logoBytes = new Uint8Array(arrayBuffer);
-            } else if (checkDefaultLogo.checked) {
-                try {
-                    const res = await fetch('logo.png');
-                    if (res.ok) {
-                        const arrayBuffer = await res.arrayBuffer();
-                        logoBytes = new Uint8Array(arrayBuffer);
-                    }
-                } catch(e) {
-                    console.warn("기본 로고를 불러올 수 없습니다.", e);
-                }
-            }
-
-            const logoFraction = parseFloat(rangeLogoFraction.value);
-            const qrBorder = parseInt(rangeQrBorder.value, 10);
-            const trimLogo = checkTrimLogo.checked;
-
-            const pngBytes = generate_qr_wasm(
-                currentQrPayload,
-                logoBytes,
-                logoFraction,
-                DEFAULT_BOX_SIZE,
-                qrBorder,
-                DEFAULT_VERSION_BUMP,
-                trimLogo,
-                DEFAULT_FILL_COLOR,
-                DEFAULT_BACK_COLOR
-            );
-
-            // Read binary PNG response
-            currentQrBlob = new Blob([pngBytes.buffer], { type: 'image/png' });
-            
-            // Revoke older object URL to free memory
-            if (currentQrBlobUrl) {
-                URL.revokeObjectURL(currentQrBlobUrl);
-            }
-            
-            currentQrBlobUrl = URL.createObjectURL(currentQrBlob);
-
-            // Render Result Image
-            qrResultImage.src = currentQrBlobUrl;
-            qrResultImage.classList.remove('hidden');
-            
-            // Enable Actions & Details
-            btnDownload.disabled = false;
-            btnCopy.disabled = false;
-            renderMetadataDisplay();
-            showToast('성공적으로 QR 코드가 생성되었습니다!');
-
-        } catch (error) {
-            console.error('Error generating QR:', error);
-            showToast(error.message || '서버 연결에 실패했습니다. 백엔드가 실행 중인지 확인하세요.', 'error');
-            qrPlaceholderView.classList.remove('hidden');
-        } finally {
-            qrLoadingView.classList.add('hidden');
-            setQrFrameBusy(false);
-            btnGenerate.disabled = false;
-            btnGenerate.querySelector('.btn-text').textContent = 'QR 코드 생성';
-        }
+    form.addEventListener('change', () => {
+        debouncedGenerateQR();
     });
 
     // Determine target payload length for details
@@ -546,4 +625,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    window.triggerInitialGeneration = () => {
+        if (wasmReady) {
+            generateQR(true);
+        }
+    };
+
+    // Trigger initial generation on page load (if WASM is already loaded)
+    window.triggerInitialGeneration();
 });

@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 
-export function generate_qr_wasm(data: string, logo_bytes: Uint8Array | null | undefined, logo_fraction: number, box_size: number, border: number, version_bump: number, do_trim_logo: boolean, fill_color: string, back_color: string): Uint8Array;
+export function generate_qr_wasm(data: string, logo_bytes: Uint8Array | null | undefined, logo_fraction: number, box_size: number, border: number, version_bump: number, do_trim_logo: boolean, fill_color: string, back_color: string, error_correction: string): Uint8Array;
 
 export function init_panic_hook(): void;
 
@@ -9,7 +9,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
     readonly memory: WebAssembly.Memory;
-    readonly generate_qr_wasm: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number) => [number, number, number, number];
+    readonly generate_qr_wasm: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number, k: number, l: number, m: number, n: number, o: number) => [number, number, number, number];
     readonly init_panic_hook: () => void;
     readonly __wbindgen_free: (a: number, b: number, c: number) => void;
     readonly __wbindgen_malloc: (a: number, b: number) => number;

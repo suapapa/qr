@@ -10,9 +10,10 @@
  * @param {boolean} do_trim_logo
  * @param {string} fill_color
  * @param {string} back_color
+ * @param {string} error_correction
  * @returns {Uint8Array}
  */
-export function generate_qr_wasm(data, logo_bytes, logo_fraction, box_size, border, version_bump, do_trim_logo, fill_color, back_color) {
+export function generate_qr_wasm(data, logo_bytes, logo_fraction, box_size, border, version_bump, do_trim_logo, fill_color, back_color, error_correction) {
     const ptr0 = passStringToWasm0(data, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     const len0 = WASM_VECTOR_LEN;
     var ptr1 = isLikeNone(logo_bytes) ? 0 : passArray8ToWasm0(logo_bytes, wasm.__wbindgen_malloc);
@@ -21,13 +22,15 @@ export function generate_qr_wasm(data, logo_bytes, logo_fraction, box_size, bord
     const len2 = WASM_VECTOR_LEN;
     const ptr3 = passStringToWasm0(back_color, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
     const len3 = WASM_VECTOR_LEN;
-    const ret = wasm.generate_qr_wasm(ptr0, len0, ptr1, len1, logo_fraction, box_size, border, version_bump, do_trim_logo, ptr2, len2, ptr3, len3);
+    const ptr4 = passStringToWasm0(error_correction, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+    const len4 = WASM_VECTOR_LEN;
+    const ret = wasm.generate_qr_wasm(ptr0, len0, ptr1, len1, logo_fraction, box_size, border, version_bump, do_trim_logo, ptr2, len2, ptr3, len3, ptr4, len4);
     if (ret[3]) {
         throw takeFromExternrefTable0(ret[2]);
     }
-    var v5 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
+    var v6 = getArrayU8FromWasm0(ret[0], ret[1]).slice();
     wasm.__wbindgen_free(ret[0], ret[1] * 1, 1);
-    return v5;
+    return v6;
 }
 
 export function init_panic_hook() {

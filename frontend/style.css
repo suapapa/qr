@@ -864,6 +864,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
     background: var(--bg-qr-result);
     border-radius: inherit;
     animation: scaleIn var(--transition-normal);
+    transition: opacity var(--transition-normal) ease;
 }
 
 @keyframes scaleIn {

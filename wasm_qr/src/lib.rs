@@ -81,9 +81,23 @@ pub fn generate_qr_wasm(
     do_trim_logo: bool,
     fill_color: &str,
     back_color: &str,
+    error_correction: &str,
 ) -> Result<Vec<u8>, JsValue> {
     
-    let mut min_version = match QrCode::with_error_correction_level(data, EcLevel::H) {
+    let has_logo = logo_bytes.is_some() && !logo_bytes.as_ref().unwrap().is_empty();
+    
+    let ec = if has_logo {
+        EcLevel::H
+    } else {
+        match error_correction {
+            "L" => EcLevel::L,
+            "M" => EcLevel::M,
+            "Q" => EcLevel::Q,
+            "H" | _ => EcLevel::H,
+        }
+    };
+
+    let mut min_version = match QrCode::with_error_correction_level(data, ec) {
         Ok(qr) => qr.version(),
         Err(e) => return Err(JsValue::from_str(&format!("QR Code data error: {:?}", e))),
     };
@@ -94,7 +108,7 @@ pub fn generate_qr_wasm(
     };
     
     // Automatically bump min version if logo is used so we have enough modules to adjust size
-    if logo_bytes.is_some() && target_v < 3 {
+    if has_logo && target_v < 3 {
         target_v = 3;
     }
     
@@ -105,20 +119,18 @@ pub fn generate_qr_wasm(
     
     let target_version = Version::Normal(target_v);
     
-    let qr = match QrCode::with_version(data, target_version, EcLevel::H) {
+    let qr = match QrCode::with_version(data, target_version, ec) {
         Ok(q) => q,
-        Err(_) => QrCode::with_error_correction_level(data, EcLevel::H).map_err(|e| JsValue::from_str(&e.to_string()))?
+        Err(_) => QrCode::with_error_correction_level(data, ec).map_err(|e| JsValue::from_str(&e.to_string()))?
     };
 
     let module_count = qr.width() as u32;
     let matrix: Vec<bool> = qr.into_colors().into_iter().map(|c| c == qrcode::Color::Dark).collect();
     
-    let mut has_logo = false;
     let mut logo_img = None;
-    if let Some(bytes) = logo_bytes {
-        if !bytes.is_empty() {
-            has_logo = true;
-            logo_img = Some(image::load_from_memory(&bytes).map_err(|e| JsValue::from_str(&e.to_string()))?);
+    if has_logo {
+        if let Some(ref bytes) = logo_bytes {
+            logo_img = Some(image::load_from_memory(bytes).map_err(|e| JsValue::from_str(&e.to_string()))?);
         }
     }
 
