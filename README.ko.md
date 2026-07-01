@@ -43,6 +43,14 @@ docker compose up -d --build
 
 ---
 
+## 🔗 URL 쿼리 파라미터로 미리 채우기
+
+주소줄에 쿼리 파라미터를 붙이면 폼이 자동으로 채워지고 QR 코드가 생성됩니다. 예: `?type=txt&content=hello`, `?type=wifi&ssid=my-router&pass=1234`
+
+전체 파라미터 목록, 타입 별칭, 인코딩 방법은 [docs/url-query-params.md](docs/url-query-params.md)를 참고하세요.
+
+---
+
 ## ⚙️ 커스터마이징 (Configuration)
 
 ### 시스템 기본 로고 교체

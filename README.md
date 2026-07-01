@@ -43,6 +43,14 @@ This project is set up for automatic deployment to **GitHub Pages** via `.github
 
 ---
 
+## 🔗 Pre-fill via URL query parameters
+
+You can open QR Studio with form fields already filled and a QR code generated—for example, `?type=txt&content=hello` or `?type=wifi&ssid=my-router&pass=1234`.
+
+See [docs/url-query-params.md](docs/url-query-params.md) for the full parameter reference, type aliases, and encoding notes.
+
+---
+
 ## ⚙️ Configuration
 
 ### Replace the default logo

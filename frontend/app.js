@@ -893,7 +893,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function selectQrType(selectedType) {
+    function selectQrType(selectedType, skipGenerate = false) {
         tabButtons.forEach((btn) => {
             const isActive = btn.getAttribute('data-type') === selectedType;
             btn.classList.toggle('active', isActive);
@@ -917,7 +917,99 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentQrType = selectedType;
         clearValidationErrors();
-        generateQR(true);
+        if (!skipGenerate) {
+            generateQR(true);
+        }
+    }
+
+    function applyQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.toString() === '') return false;
+
+        const TYPE_ALIASES = {
+            txt: 'text',
+            tel: 'phone',
+        };
+        const VALID_TYPES = new Set(['url', 'wifi', 'text', 'phone', 'sms', 'email']);
+
+        const get = (...keys) => {
+            for (const key of keys) {
+                if (!params.has(key)) continue;
+                const value = params.get(key);
+                if (value !== null && value !== '') return value;
+            }
+            return null;
+        };
+
+        let qrType = get('type');
+        if (qrType) {
+            qrType = TYPE_ALIASES[qrType.toLowerCase()] || qrType.toLowerCase();
+        }
+
+        if (!qrType || !VALID_TYPES.has(qrType)) {
+            if (get('ssid') !== null) qrType = 'wifi';
+            else if (get('to', 'email') !== null) qrType = 'email';
+            else if (get('message', 'msg') !== null && get('phone', 'tel', 'number') !== null) qrType = 'sms';
+            else if (get('phone', 'tel', 'number') !== null) qrType = 'phone';
+            else if (get('url') !== null) qrType = 'url';
+            else if (get('content', 'text') !== null) qrType = 'text';
+        }
+
+        if (!qrType || !VALID_TYPES.has(qrType)) return false;
+
+        switch (qrType) {
+            case 'url': {
+                const url = get('url', 'content');
+                if (url) document.getElementById('input-url').value = url;
+                break;
+            }
+            case 'wifi': {
+                const ssid = get('ssid');
+                if (ssid) document.getElementById('input-wifi-ssid').value = ssid;
+                const pass = get('pass', 'password');
+                if (pass !== null) document.getElementById('input-wifi-pass').value = pass;
+                const sec = get('security', 'sec');
+                if (sec) {
+                    const secUpper = sec.toUpperCase();
+                    const select = document.getElementById('select-wifi-security');
+                    if (secUpper === 'NOPASS' || secUpper === 'OPEN') {
+                        select.value = 'nopass';
+                    } else if (secUpper === 'WPA' || secUpper === 'WEP') {
+                        select.value = secUpper;
+                    }
+                }
+                break;
+            }
+            case 'text': {
+                const text = get('content', 'text');
+                if (text) document.getElementById('input-text').value = text;
+                break;
+            }
+            case 'phone': {
+                const phone = get('phone', 'tel', 'number', 'content');
+                if (phone) document.getElementById('input-phone').value = phone;
+                break;
+            }
+            case 'sms': {
+                const phone = get('phone', 'tel', 'number');
+                if (phone) document.getElementById('input-sms-phone').value = phone;
+                const msg = get('message', 'msg', 'body', 'content');
+                if (msg) document.getElementById('input-sms-message').value = msg;
+                break;
+            }
+            case 'email': {
+                const to = get('to', 'email');
+                if (to) document.getElementById('input-email-to').value = to;
+                const subject = get('subject', 'sub');
+                if (subject) document.getElementById('input-email-subject').value = subject;
+                const body = get('body');
+                if (body) document.getElementById('input-email-body').value = body;
+                break;
+            }
+        }
+
+        selectQrType(qrType, true);
+        return true;
     }
 
     function selectTab(button) {
@@ -1299,6 +1391,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize translations
     setLanguage(currentLang);
+
+    applyQueryParams();
 
     window.triggerInitialGeneration = () => {
         if (wasmReady) {
