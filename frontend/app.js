@@ -758,9 +758,30 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    function resetQrView() {
+        if (currentQrBlobUrl) {
+            URL.revokeObjectURL(currentQrBlobUrl);
+            currentQrBlobUrl = null;
+        }
+        currentQrBlob = null;
+        qrResultImage.src = '';
+        qrResultImage.classList.add('hidden');
+        qrPlaceholderView.classList.remove('hidden');
+        qrLoadingView.classList.add('hidden');
+        
+        btnDownload.disabled = true;
+        btnCopy.disabled = true;
+        
+        if (qrMetadataView) {
+            qrMetadataView.classList.add('hidden');
+        }
+        setQrFrameBusy(false);
+    }
+
     // QR Code Generation function (common)
     async function generateQR(isSilent = false) {
         if (!validateActiveInputs()) {
+            resetQrView();
             if (!isSilent) {
                 showToast(translations[currentLang].toast_check_input, 'error');
                 focusFirstValidationError();
@@ -851,9 +872,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isSilent) {
                 showToast(error.message || translations[currentLang].toast_generation_failed, 'error');
             }
-            if (!currentQrBlobUrl) {
-                qrPlaceholderView.classList.remove('hidden');
-            }
+            resetQrView();
         } finally {
             qrLoadingView.classList.add('hidden');
             setQrFrameBusy(false);
@@ -898,7 +917,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         currentQrType = selectedType;
         clearValidationErrors();
-        debouncedGenerateQR();
+        generateQR(true);
     }
 
     function selectTab(button) {
