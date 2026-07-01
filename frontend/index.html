@@ -40,13 +40,26 @@
         <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     </head>
     <body>
-        <a class="skip-link" href="#qr-generator-form">본문으로 건너뛰기</a>
+        <a class="skip-link" href="#qr-generator-form" data-i18n="skip_to_content">본문으로 건너뛰기</a>
         <header class="app-header">
             <div class="logo-area">
                 <i class="icon-logo" data-lucide="qr-code"></i>
-                <h1>QR Studio</h1>
+                <h1 data-i18n="title">QR Studio</h1>
             </div>
-            <p class="tagline">
+            <!-- Language Selector -->
+            <div class="language-selector">
+                <i data-lucide="languages" class="lang-icon"></i>
+                <div class="select-wrapper lang-select-wrapper">
+                    <select id="select-language" name="language" aria-label="언어 선택 / Select Language">
+                        <option value="ko">한국어</option>
+                        <option value="en">English</option>
+                        <option value="ja">日本語</option>
+                        <option value="zh">中文</option>
+                        <option value="pl">Polski</option>
+                    </select>
+                </div>
+            </div>
+            <p class="tagline" data-i18n="tagline">
                 중앙 로고 삽입을 지원하는 실시간 QR 생성기
             </p>
         </header>
@@ -55,13 +68,13 @@
             <!-- Left Side: Controls -->
             <section class="controls-panel card">
                 <h2 class="section-title">
-                    <i data-lucide="sliders"></i> QR 코드 설정
+                    <i data-lucide="sliders"></i> <span data-i18n="qr_settings">QR 코드 설정</span>
                 </h2>
 
                 <form id="qr-generator-form" novalidate>
                     <!-- QR Type: dropdown on mobile, tabs on desktop -->
                     <div class="tabs-container">
-                        <label class="type-select-label" for="select-qr-type"
+                        <label class="type-select-label" for="select-qr-type" data-i18n="qr_type"
                             >QR 코드 종류</label
                         >
                         <div class="select-wrapper type-select-wrapper">
@@ -78,6 +91,7 @@
                             class="tabs-list"
                             role="tablist"
                             aria-label="QR 코드 종류 선택"
+                            data-i18n-aria-label="qr_type_aria"
                         >
                             <button
                                 type="button"
@@ -88,7 +102,7 @@
                                 id="tab-url"
                                 data-type="url"
                             >
-                                <i data-lucide="link-2"></i> URL
+                                <i data-lucide="link-2"></i> <span data-i18n="tab_url">URL</span>
                             </button>
                             <button
                                 type="button"
@@ -99,7 +113,7 @@
                                 id="tab-wifi"
                                 data-type="wifi"
                             >
-                                <i data-lucide="wifi"></i> Wi-Fi
+                                <i data-lucide="wifi"></i> <span data-i18n="tab_wifi">Wi-Fi</span>
                             </button>
                             <button
                                 type="button"
@@ -110,7 +124,7 @@
                                 id="tab-text"
                                 data-type="text"
                             >
-                                <i data-lucide="align-left"></i> 텍스트
+                                <i data-lucide="align-left"></i> <span data-i18n="tab_text">텍스트</span>
                             </button>
                             <button
                                 type="button"
@@ -121,7 +135,7 @@
                                 id="tab-phone"
                                 data-type="phone"
                             >
-                                <i data-lucide="phone"></i> 전화
+                                <i data-lucide="phone"></i> <span data-i18n="tab_phone">전화</span>
                             </button>
                             <button
                                 type="button"
@@ -132,7 +146,7 @@
                                 id="tab-sms"
                                 data-type="sms"
                             >
-                                <i data-lucide="message-square"></i> SMS
+                                <i data-lucide="message-square"></i> <span data-i18n="tab_sms">SMS</span>
                             </button>
                             <button
                                 type="button"
@@ -143,7 +157,7 @@
                                 id="tab-email"
                                 data-type="email"
                             >
-                                <i data-lucide="mail"></i> 이메일
+                                <i data-lucide="mail"></i> <span data-i18n="tab_email">이메일</span>
                             </button>
                         </div>
                     </div>
@@ -158,7 +172,7 @@
                             aria-labelledby="tab-url"
                         >
                             <div class="form-group">
-                                <label for="input-url">연결할 URL 주소</label>
+                                <label for="input-url" data-i18n="url_label">연결할 URL 주소</label>
                                 <div class="input-wrapper">
                                     <i
                                         class="input-icon"
@@ -189,7 +203,7 @@
                             aria-labelledby="tab-wifi"
                         >
                             <div class="form-group">
-                                <label for="input-wifi-ssid"
+                                <label for="input-wifi-ssid" data-i18n="wifi_ssid_label"
                                     >네트워크 이름 (SSID)</label
                                 >
                                 <div class="input-wrapper">
@@ -202,6 +216,7 @@
                                         id="input-wifi-ssid"
                                         name="wifi_ssid"
                                         placeholder="WiFi SSID 입력"
+                                        data-i18n-placeholder="wifi_ssid_placeholder"
                                     />
                                 </div>
                                 <span
@@ -212,7 +227,7 @@
                             </div>
                             <div class="grid-2-cols">
                                 <div class="form-group">
-                                    <label for="input-wifi-pass"
+                                    <label for="input-wifi-pass" data-i18n="wifi_pass_label"
                                         >비밀번호</label
                                     >
                                     <div class="input-wrapper password-wrapper">
@@ -225,12 +240,14 @@
                                             id="input-wifi-pass"
                                             name="wifi_pass"
                                             placeholder="비밀번호 입력"
+                                            data-i18n-placeholder="wifi_pass_placeholder"
                                         />
                                         <button
                                             type="button"
                                             id="toggle-wifi-pass"
                                             class="btn-icon"
                                             aria-label="비밀번호 보기 토글"
+                                            data-i18n-aria-label="wifi_pass_toggle_aria"
                                             aria-pressed="false"
                                         >
                                             <i data-lucide="eye"></i>
@@ -238,7 +255,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="select-wifi-security"
+                                    <label for="select-wifi-security" data-i18n="wifi_security_label"
                                         >보안 설정</label
                                     >
                                     <div class="select-wrapper">
@@ -246,11 +263,11 @@
                                             id="select-wifi-security"
                                             name="wifi_security"
                                         >
-                                            <option value="WPA" selected>
+                                            <option value="WPA" selected data-i18n="wifi_security_wpa">
                                                 WPA/WPA2
                                             </option>
-                                            <option value="WEP">WEP</option>
-                                            <option value="nopass">
+                                            <option value="WEP" data-i18n="wifi_security_wep">WEP</option>
+                                            <option value="nopass" data-i18n="wifi_security_open">
                                                 암호 없음 (Open)
                                             </option>
                                         </select>
@@ -267,11 +284,12 @@
                             aria-labelledby="tab-text"
                         >
                             <div class="form-group">
-                                <label for="input-text">입력할 텍스트</label>
+                                <label for="input-text" data-i18n="text_label">입력할 텍스트</label>
                                 <textarea
                                     id="input-text"
                                     name="text"
                                     placeholder="QR 코드에 담을 텍스트 내용을 입력하세요..."
+                                    data-i18n-placeholder="text_placeholder"
                                     rows="3"
                                 ></textarea>
                                 <span
@@ -290,7 +308,7 @@
                             aria-labelledby="tab-phone"
                         >
                             <div class="form-group">
-                                <label for="input-phone">전화번호</label>
+                                <label for="input-phone" data-i18n="phone_label">전화번호</label>
                                 <div class="input-wrapper">
                                     <i
                                         class="input-icon"
@@ -301,6 +319,7 @@
                                         id="input-phone"
                                         name="phone"
                                         placeholder="010-1234-5678"
+                                        data-i18n-placeholder="phone_placeholder"
                                     />
                                 </div>
                                 <span
@@ -319,7 +338,7 @@
                             aria-labelledby="tab-sms"
                         >
                             <div class="form-group">
-                                <label for="input-sms-phone"
+                                <label for="input-sms-phone" data-i18n="sms_phone_label"
                                     >수신자 전화번호</label
                                 >
                                 <div class="input-wrapper">
@@ -332,6 +351,7 @@
                                         id="input-sms-phone"
                                         name="sms_phone"
                                         placeholder="010-1234-5678"
+                                        data-i18n-placeholder="sms_phone_placeholder"
                                     />
                                 </div>
                                 <span
@@ -341,13 +361,14 @@
                                 ></span>
                             </div>
                             <div class="form-group">
-                                <label for="input-sms-message"
+                                <label for="input-sms-message" data-i18n="sms_message_label"
                                     >메시지 내용</label
                                 >
                                 <textarea
                                     id="input-sms-message"
                                     name="sms_message"
                                     placeholder="전송할 문자 메시지를 입력하세요..."
+                                    data-i18n-placeholder="sms_message_placeholder"
                                     rows="2"
                                 ></textarea>
                             </div>
@@ -361,7 +382,7 @@
                             aria-labelledby="tab-email"
                         >
                             <div class="form-group">
-                                <label for="input-email-to"
+                                <label for="input-email-to" data-i18n="email_to_label"
                                     >수신 이메일 주소</label
                                 >
                                 <div class="input-wrapper">
@@ -374,6 +395,7 @@
                                         id="input-email-to"
                                         name="email_to"
                                         placeholder="recipient@example.com"
+                                        data-i18n-placeholder="email_to_placeholder"
                                     />
                                 </div>
                                 <span
@@ -383,7 +405,7 @@
                                 ></span>
                             </div>
                             <div class="form-group">
-                                <label for="input-email-subject"
+                                <label for="input-email-subject" data-i18n="email_subject_label"
                                     >메일 제목</label
                                 >
                                 <input
@@ -391,14 +413,16 @@
                                     id="input-email-subject"
                                     name="email_subject"
                                     placeholder="이메일 제목 입력"
+                                    data-i18n-placeholder="email_subject_placeholder"
                                 />
                             </div>
                             <div class="form-group">
-                                <label for="input-email-body">메일 본문</label>
+                                <label for="input-email-body" data-i18n="email_body_label">메일 본문</label>
                                 <textarea
                                     id="input-email-body"
                                     name="email_body"
                                     placeholder="이메일 내용 입력..."
+                                    data-i18n-placeholder="email_body_placeholder"
                                     rows="2"
                                 ></textarea>
                             </div>
@@ -408,16 +432,16 @@
                     <!-- Logo Settings -->
                     <div class="accordion-item expanded">
                         <h3 class="accordion-header">
-                            <i data-lucide="image"></i> 중앙 로고 설정
+                            <i data-lucide="image"></i> <span data-i18n="logo_settings_title">중앙 로고 설정</span>
                         </h3>
                         <div class="accordion-content">
                             <!-- Default Logo Toggle -->
                             <div class="toggle-group">
                                 <div class="toggle-info">
-                                    <span class="toggle-label"
+                                    <span class="toggle-label" data-i18n="use_default_logo_label"
                                         >기본 로고 사용</span
                                     >
-                                    <span class="toggle-desc"
+                                    <span class="toggle-desc" data-i18n="use_default_logo_desc"
                                         >시스템 기본 로고(logo.png)를 QR 중앙에
                                         올립니다.</span
                                     >
@@ -433,7 +457,7 @@
                             </div>
 
                             <!-- Logo Upload Box -->
-                            <div class="upload-zone" id="logo-dropzone" tabindex="0" role="button" aria-label="로고 이미지 업로드: 드래그하거나 Enter로 파일 선택">
+                            <div class="upload-zone" id="logo-dropzone" tabindex="0" role="button" aria-label="로고 이미지 업로드: 드래그하거나 Enter로 파일 선택" data-i18n-aria-label="upload_zone_aria">
                                 <input
                                     type="file"
                                     id="logo-file-input"
@@ -449,11 +473,11 @@
                                         class="upload-icon"
                                         data-lucide="upload-cloud"
                                     ></i>
-                                    <p class="primary-prompt">
+                                    <p class="primary-prompt" data-i18n="upload_zone_primary">
                                         여기에 로고 이미지 드래그 또는
                                         <span>파일 선택</span>
                                     </p>
-                                    <p class="secondary-prompt">
+                                    <p class="secondary-prompt" data-i18n="upload_zone_secondary">
                                         PNG, JPG (투명 배경 PNG 권장)
                                     </p>
                                 </div>
@@ -464,6 +488,7 @@
                                     <img
                                         src=""
                                         alt="업로드된 로고 프리뷰"
+                                        data-i18n-alt="upload_preview_alt"
                                         id="uploaded-logo-img"
                                     />
                                     <div class="file-details">
@@ -483,6 +508,7 @@
                                         id="btn-remove-logo"
                                         class="btn-icon danger"
                                         aria-label="로고 삭제"
+                                        data-i18n-aria-label="remove_logo_aria"
                                     >
                                         <i data-lucide="trash-2"></i>
                                     </button>
@@ -493,7 +519,7 @@
                             <div class="advanced-settings-sub">
                                 <div class="slider-group">
                                     <div class="slider-header">
-                                        <label for="range-logo-fraction"
+                                        <label for="range-logo-fraction" data-i18n="logo_size_label"
                                             >로고 크기 비율</label
                                         >
                                         <span
@@ -511,14 +537,14 @@
                                         step="0.01"
                                         value="0.20"
                                     />
-                                    <p class="slider-desc">
+                                    <p class="slider-desc" data-i18n="logo_size_desc">
                                         QR 코드 손상 한계 대비 안전한 로고 지름
                                         크기 (권장: 20%)
                                     </p>
                                 </div>
                                 <div class="slider-group">
                                     <div class="slider-header">
-                                        <label for="range-qr-border"
+                                        <label for="range-qr-border" data-i18n="qr_border_label"
                                             >테두리(여백) 크기</label
                                         >
                                         <span
@@ -536,13 +562,13 @@
                                         step="1"
                                         value="2"
                                     />
-                                    <p class="slider-desc">
+                                    <p class="slider-desc" data-i18n="qr_border_desc">
                                         QR 주변 여백 모듈 수 (표준: 4칸, 최신 기기: 1~2칸 권장)
                                     </p>
                                 </div>
                                 <div class="toggle-group sm">
                                     <div class="toggle-info">
-                                        <span class="toggle-label"
+                                        <span class="toggle-label" data-i18n="trim_logo_label"
                                             >로고 여백 자동 제거</span
                                         >
                                     </div>
@@ -562,7 +588,7 @@
 
                     <!-- Submit Action -->
                     <button type="submit" class="btn-primary" id="btn-generate">
-                        <span class="btn-text">QR 코드 생성</span>
+                        <span class="btn-text" data-i18n="btn_generate">QR 코드 생성</span>
                     </button>
                 </form>
             </section>
@@ -572,7 +598,7 @@
                 <div class="sticky-preview-wrapper">
                     <div class="preview-card card">
                         <h2 class="preview-title">
-                            <i data-lucide="eye"></i> QR 코드 프리뷰
+                            <i data-lucide="eye"></i> <span data-i18n="preview_title">QR 코드 프리뷰</span>
                         </h2>
 
                         <!-- QR Image Frame -->
@@ -587,7 +613,7 @@
                                     <div class="corner-box bottom-left"></div>
                                     <div class="inner-dots"></div>
                                 </div>
-                                <p>
+                                <p data-i18n="placeholder_text">
                                     설정을 변경하고 <strong>생성하기</strong>를
                                     클릭하세요.
                                 </p>
@@ -597,11 +623,12 @@
                                 id="qr-loading-view"
                             >
                                 <div class="shimmer-ring"></div>
-                                <p>QR 코드를 렌더링하는 중...</p>
+                                <p data-i18n="loading_text">QR 코드를 렌더링하는 중...</p>
                             </div>
                             <img
                                 src=""
                                 alt="생성된 QR 코드 이미지"
+                                data-i18n-alt="qr_result_alt"
                                 class="qr-result-img hidden"
                                 id="qr-result-image"
                             />
@@ -610,11 +637,11 @@
                         <!-- Metadata details -->
                         <div class="qr-metadata hidden" id="qr-metadata-view">
                             <div class="metadata-row">
-                                <span class="meta-label">인코딩 타입</span>
+                                <span class="meta-label" data-i18n="meta_type_label">인코딩 타입</span>
                                 <span class="meta-val" id="meta-type">-</span>
                             </div>
                             <div class="metadata-row">
-                                <span class="meta-label">데이터 길이</span>
+                                <span class="meta-label" data-i18n="meta_length_label">데이터 길이</span>
                                 <span class="meta-val" id="meta-length">-</span>
                             </div>
                         </div>
@@ -627,7 +654,7 @@
                                 id="btn-download"
                                 disabled
                             >
-                                <i data-lucide="download"></i> PNG 다운로드
+                                <i data-lucide="download"></i> <span data-i18n="btn_download">PNG 다운로드</span>
                             </button>
                             <button
                                 type="button"
@@ -635,7 +662,7 @@
                                 id="btn-copy"
                                 disabled
                             >
-                                <i data-lucide="copy"></i> 복사하기
+                                <i data-lucide="copy"></i> <span data-i18n="btn_copy">복사하기</span>
                             </button>
                         </div>
                     </div>
@@ -644,17 +671,17 @@
                     <div class="ecc-card card" style="margin-block-start: 1.5rem;">
                         <h3 class="tip-title" style="display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; margin-block-end: 1rem;">
                             <i data-lucide="shield-check" class="text-accent" style="width: 1.25rem; height: 1.25rem;"></i>
-                            오류 복구 수준 (ECC)
+                            <span data-i18n="ecc_title">오류 복구 수준 (ECC)</span>
                         </h3>
                         <div class="select-wrapper" style="margin-block-end: 0.75rem;">
                             <select id="select-error-correction" name="error_correction">
-                                <option value="L">L (낮음 - 약 7% 복구)</option>
-                                <option value="M" selected>M (보통 - 약 15% 복구)</option>
-                                <option value="Q">Q (높음 - 약 25% 복구)</option>
-                                <option value="H">H (최고 - 약 30% 복구)</option>
+                                <option value="L" data-i18n="ecc_option_l">L (낮음 - 약 7% 복구)</option>
+                                <option value="M" selected data-i18n="ecc_option_m">M (보통 - 약 15% 복구)</option>
+                                <option value="Q" data-i18n="ecc_option_q">Q (높음 - 약 25% 복구)</option>
+                                <option value="H" data-i18n="ecc_option_h">H (최고 - 약 30% 복구)</option>
                             </select>
                         </div>
-                        <p class="slider-desc" id="ecc-desc" style="font-size: 0.8rem; line-height: 1.4; margin: 0; color: var(--color-text-muted);">
+                        <p class="slider-desc" id="ecc-desc" style="font-size: 0.8rem; line-height: 1.4; margin: 0; color: var(--color-text-muted);" data-i18n="ecc_desc">
                             오류 복구 수준이 높을수록 QR 코드가 일부 가려지거나 훼손되어도 인식률이 향상됩니다.
                         </p>
                     </div>

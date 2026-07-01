@@ -149,6 +149,7 @@ body {
     margin-block-end: 2.5rem;
     max-width: 800px;
     width: 100%;
+    position: relative; /* Position relative for absolute language selector */
 }
 
 .logo-area {
@@ -176,6 +177,66 @@ body {
     font-size: 0.95rem;
     font-weight: 400;
 }
+
+/* Language Selector styling */
+.language-selector {
+    position: absolute;
+    top: 0.5rem;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--bg-surface-solid);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    padding: 0.25rem 0.5rem;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.language-selector:hover {
+    border-color: var(--color-border-hover);
+}
+
+.language-selector:focus-within {
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 3px var(--color-primary-focus-ring);
+}
+
+.lang-icon {
+    color: var(--color-text-muted);
+    width: 1rem;
+    height: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lang-select-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.lang-select-wrapper select {
+    background: transparent;
+    border: none;
+    color: var(--color-text-main);
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    padding-inline-end: 0.25rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* For browsers that support custom option styling */
+.lang-select-wrapper select option {
+    background-color: var(--bg-surface-solid);
+    color: var(--color-text-main);
+}
+
 
 /* 3. Main Dashboard Layout */
 .app-main-content {
@@ -1158,6 +1219,18 @@ input[type="range"]::-webkit-slider-thumb:hover {
 @media (max-width: 768px) {
     body {
         padding: 1.25rem 1rem;
+    }
+
+    .app-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .language-selector {
+        position: static;
+        margin-block-start: 0.5rem;
     }
 
     .type-select-label,
