@@ -1,5 +1,5 @@
 ---
-name: QR Code Studio
+name: QR Studio
 description: Dark, task-focused QR generator with logo embedding and live preview
 colors:
   bg-base: "#0a0d12"
@@ -54,7 +54,7 @@ components:
 
 ## Overview
 
-QR Code Studio uses a **dark, restrained product UI**: near-black surfaces, green primary actions, and a two-column layout (controls left, sticky preview right). Design serves a single workflow—configure, preview, export—with no marketing hero or decorative motion. Typography is a single system-ui stack; hierarchy comes from weight and size, not font pairing.
+QR Studio uses a **dark, restrained product UI**: near-black surfaces, green primary actions, and a two-column layout (controls left, sticky preview right). Design serves a single workflow—configure, preview, export—with no marketing hero or decorative motion. Typography is a single system-ui stack; hierarchy comes from weight and size, not font pairing.
 
 ## Colors
 

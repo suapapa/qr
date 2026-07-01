@@ -1,4 +1,4 @@
-# QR Code Studio
+# QR Studio
 
 > [한국어](README.ko.md)
 

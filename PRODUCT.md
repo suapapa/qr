@@ -10,7 +10,7 @@ Designers, marketers, and developers who need branded QR codes with a center log
 
 ## Product Purpose
 
-QR Code Studio generates high-quality QR codes entirely in the browser using Rust WASM. Users configure payload type (URL, Wi‑Fi, text, phone, SMS, email), optional center logo, error correction, and quiet zone, then download PNG or copy to clipboard. Success means a scannable, on-brand QR code in under a minute with no backend dependency.
+QR Studio generates high-quality QR codes entirely in the browser using Rust WASM. Users configure payload type (URL, Wi‑Fi, text, phone, SMS, email), optional center logo, error correction, and quiet zone, then download PNG or copy to clipboard. Success means a scannable, on-brand QR code in under a minute with no backend dependency.
 
 ## Brand Personality
 

@@ -1,4 +1,4 @@
-# QR Code Studio
+# QR Studio
 
 > [English](README.md)
 
