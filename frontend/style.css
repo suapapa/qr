@@ -154,6 +154,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
+    height: var(--space-touch-min);
     min-height: var(--space-touch-min);
     background: var(--bg-surface-solid);
     border: 1px solid var(--color-border);
@@ -221,6 +222,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
+    height: var(--space-touch-min);
     min-height: var(--space-touch-min);
     background: var(--bg-surface-solid);
     border: 1px solid var(--color-border);
@@ -261,7 +263,14 @@ body {
     font-weight: 500;
     cursor: pointer;
     outline: none;
+    /* Reset the global `select` sizing (min-height: 48px, padding: 0.75rem 1rem)
+       so this compact header control matches .btn-about's height. */
+    min-height: 0;
+    height: 100%;
+    padding-block: 0;
+    padding-inline-start: 0;
     padding-inline-end: 0.25rem;
+    line-height: 1.4;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
