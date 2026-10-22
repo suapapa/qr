@@ -1281,6 +1281,51 @@ input[type="range"]:focus-visible::-moz-range-thumb {
     border-radius: 2px;
 }
 
+/* 16b. Info section (SEO/GEO content: about, features, how-to, FAQ) */
+.info-section {
+    max-width: 1100px;
+    margin: 2.5rem auto 0;
+    padding: 2rem;
+    background: var(--bg-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+    text-align: left;
+}
+.info-section h2 {
+    font-size: 1.35rem;
+    margin: 1.75rem 0 0.75rem;
+    color: var(--color-text-main);
+}
+.info-section h2:first-child { margin-top: 0; }
+.info-lead, .info-section p, .howto-steps li, .faq-list p {
+    color: var(--color-text-muted);
+    line-height: 1.7;
+}
+.feature-grid {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+.feature-grid li {
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    background: var(--bg-inset-subtle);
+}
+.feature-grid h3 { font-size: 1rem; margin-bottom: 0.4rem; color: var(--color-text-main); }
+.howto-steps { padding-left: 1.4rem; display: grid; gap: 0.4rem; }
+.faq-list { display: grid; gap: 0.6rem; }
+.faq-list details {
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+    padding: 0.8rem 1rem;
+    background: var(--bg-inset-subtle);
+}
+.faq-list summary { cursor: pointer; font-weight: 600; color: var(--color-text-main); }
+.faq-list p { margin-top: 0.5rem; }
+
 /* 17. Media Queries (Responsive) */
 @media (max-width: 768px) {
     body {

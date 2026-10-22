@@ -1,0 +1,15 @@
+{
+  "name": "QR Studio — 무료 QR 코드 생성기",
+  "short_name": "QR Studio",
+  "description": "중앙에 맞춤 로고를 넣을 수 있는 무료 QR 코드 생성기. URL·Wi-Fi·텍스트·전화·SMS·이메일 QR을 브라우저에서 바로 만들고 PNG로 다운로드하세요.",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a0d12",
+  "theme_color": "#0a0d12",
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

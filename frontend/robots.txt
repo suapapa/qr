@@ -1,0 +1,6 @@
+# QR Studio — https://qr.homin.dev/
+# All crawlers and AI search/answer engines are welcome.
+User-agent: *
+Allow: /
+
+Sitemap: https://qr.homin.dev/sitemap.xml

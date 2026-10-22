@@ -1,0 +1,38 @@
+# QR Studio
+
+> QR Studio (https://qr.homin.dev/) is a free QR code generator that lets you put a custom logo in the center of a QR code. It creates URL, Wi-Fi, text, phone, SMS, and email QR codes entirely in the browser and exports them as PNG. No sign-up, no installation, and no server: all processing runs locally with Rust WebAssembly, so user input (including Wi-Fi passwords) is never sent to or stored on a server.
+
+## What it does
+
+- Generates six QR code types: URL (web link), Wi-Fi (SSID, password, security type), text, phone call, SMS, and email (recipient, subject, body).
+- Embeds a custom logo image in the center of the QR code, with adjustable logo size, automatic transparent-margin trimming, and quiet-zone (border) control.
+- Applies error correction level (ECC) H automatically when a logo is inserted (about 30% recovery) and adjusts the QR version, so logo QR codes remain scannable. Recommended logo size: 20%.
+- Lets users download the generated QR code as a PNG or copy it as an image to the clipboard.
+- Supports deep links via URL query parameters (e.g. `?type=wifi&ssid=my-router`) to pre-fill the form.
+
+## Key facts
+
+- Price: free; no account or sign-up required.
+- Platform: any modern web browser with JavaScript and WebAssembly support; no backend server.
+- Privacy: input is processed only in the user's browser (Rust WebAssembly) and is never transmitted.
+- Languages: Korean (한국어), English, Japanese (日本語), Chinese (中文), Polish (Polski).
+- Author: Homin Lee (i@homin.dev, https://homin.dev).
+
+## How to use
+
+1. Choose a QR type (URL, Wi-Fi, text, phone, SMS, email) and enter the content.
+2. Optionally upload a center logo and adjust size, margin, and error correction.
+3. Click "Generate QR Code", then download the PNG or copy the image.
+
+## FAQ
+
+- Is QR Studio free? Yes — free, with no sign-up or installation.
+- Is my input sent to a server? No. Generation runs entirely in the browser via Rust WebAssembly.
+- Does a center logo break scanning? No. ECC level H is applied automatically and the QR version is adjusted; 20% is the recommended logo size.
+- What QR types are supported? URL, Wi-Fi, text, phone, SMS, and email.
+- How do I save the result? Download it as a PNG, or copy it as an image in supported browsers.
+
+## Links
+
+- App: https://qr.homin.dev/
+- Sitemap: https://qr.homin.dev/sitemap.xml
