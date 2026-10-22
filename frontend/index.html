@@ -152,6 +152,17 @@
         <a class="skip-link" href="#qr-generator-form" data-i18n="skip_to_content">본문으로 건너뛰기</a>
         <header class="app-header">
             <div class="header-row">
+                <div class="header-actions-left">
+                    <button
+                        type="button"
+                        id="btn-about"
+                        class="btn-about"
+                        aria-haspopup="dialog"
+                        aria-controls="about-dialog"
+                    >
+                        <i data-lucide="info"></i> <span data-i18n="about_btn">About</span>
+                    </button>
+                </div>
                 <div class="logo-area">
                     <i class="icon-logo" data-lucide="qr-code"></i>
                     <h1 data-i18n="title">QR Studio</h1>
@@ -805,7 +816,19 @@
         </main>
 
         <!-- SEO/GEO: crawlable description of what this tool is, how it works, and FAQ.
-             Text mirrors the JSON-LD (WebApplication / HowTo / FAQPage) in <head>. -->
+             Text mirrors the JSON-LD (WebApplication / HowTo / FAQPage) in <head>.
+             Shown in a modal dialog opened by the About button in the header. -->
+        <dialog id="about-dialog" class="about-dialog" aria-labelledby="about-title">
+        <div class="about-dialog-inner">
+        <button
+            type="button"
+            id="btn-close-about"
+            class="btn-dialog-close"
+            aria-label="팝업 닫기"
+            data-i18n-aria-label="about_close_aria"
+        >
+            <i data-lucide="x"></i>
+        </button>
         <section class="info-section" aria-labelledby="about-title">
             <h2 id="about-title" data-i18n="about_title">QR Studio란?</h2>
             <p class="info-lead" data-i18n="about_desc">
@@ -862,6 +885,8 @@
                 </details>
             </div>
         </section>
+        </div>
+        </dialog>
 
         <noscript>
             <p style="text-align:center;padding:1rem">

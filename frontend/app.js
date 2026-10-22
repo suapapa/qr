@@ -4,6 +4,8 @@ const translations = {
     ko: {
         title: "QR Studio",
         tagline: "중앙 로고 삽입을 지원하는 실시간 QR 생성기",
+        about_btn: "About",
+        about_close_aria: "팝업 닫기",
         skip_to_content: "본문으로 건너뛰기",
         qr_settings: "QR 코드 설정",
         qr_type: "QR 코드 종류",
@@ -153,6 +155,8 @@ const translations = {
     en: {
         title: "QR Studio",
         tagline: "Real-time QR generator with custom center logo support",
+        about_btn: "About",
+        about_close_aria: "Close dialog",
         skip_to_content: "Skip to content",
         qr_settings: "QR Code Settings",
         qr_type: "QR Code Type",
@@ -291,6 +295,8 @@ const translations = {
     ja: {
         title: "QR Studio",
         tagline: "ロゴ中央挿入対応のリアルタイムQRコード生成ツール",
+        about_btn: "About",
+        about_close_aria: "ダイアログを閉じる",
         skip_to_content: "本文へスキップ",
         qr_settings: "QRコード設定",
         qr_type: "QRコードの種類",
@@ -429,6 +435,8 @@ const translations = {
     zh: {
         title: "QR Studio",
         tagline: "支持在中心插入自定义 Logo 的实时 QR 码生成器",
+        about_btn: "About",
+        about_close_aria: "关闭弹窗",
         skip_to_content: "跳过并转到正文",
         qr_settings: "QR 码设置",
         qr_type: "QR 码类型",
@@ -567,6 +575,8 @@ const translations = {
     pl: {
         title: "QR Studio",
         tagline: "Generator kodów QR w czasie rzeczywistym z opcją wstawiania własnego logo",
+        about_btn: "About",
+        about_close_aria: "Zamknij okno",
         skip_to_content: "Przejdź do zawartości",
         qr_settings: "Ustawienia kodu QR",
         qr_type: "Typ kodu QR",
@@ -1545,6 +1555,36 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // About Dialog Bindings
+    const btnAbout = document.getElementById('btn-about');
+    const aboutDialog = document.getElementById('about-dialog');
+    const btnCloseAbout = document.getElementById('btn-close-about');
+    if (btnAbout && aboutDialog) {
+        btnAbout.addEventListener('click', () => {
+            if (aboutDialog.open) return;
+            if (typeof aboutDialog.showModal === 'function') {
+                aboutDialog.showModal();
+            } else {
+                aboutDialog.setAttribute('open', '');
+            }
+        });
+        // Click on the backdrop (the dialog element itself, outside its content) closes it.
+        aboutDialog.addEventListener('click', (e) => {
+            if (e.target === aboutDialog) {
+                aboutDialog.close();
+            }
+        });
+        // Native <dialog> closes on Esc; restore focus to the About button for continuity.
+        aboutDialog.addEventListener('close', () => {
+            btnAbout.focus();
+        });
+    }
+    if (btnCloseAbout && aboutDialog) {
+        btnCloseAbout.addEventListener('click', () => {
+            aboutDialog.close();
+        });
+    }
 
     // Language Selector Bindings
     const selectLanguage = document.getElementById('select-language');
